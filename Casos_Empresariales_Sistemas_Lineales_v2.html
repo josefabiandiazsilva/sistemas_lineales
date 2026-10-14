@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casos Empresariales · Sistemas Lineales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E50914; --red-dark:#B20710; --red-deep:#831010; --red-soft:#FDECEC; --red-soft2:#FFF5F5;
+  --ink:#141414; --ink2:#2B2B2B; --muted:#6D6D6E; --line:#E6E6E6; --bg:#FFFFFF; --panel:#F5F5F1;
+  --ok:#0F8A4B; --ok-soft:#EAF7F0; --warn:#B45309; --warn-soft:#FFF6E6;
+  --display:'Bebas Neue', Impact, 'Arial Narrow Bold', sans-serif;
+  --body:'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  --mono:'Roboto Mono', Consolas, 'Courier New', monospace;
+  --math:'Cambria Math', Cambria, 'Times New Roman', serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+b.red,.red{color:var(--red)}
+.muted{color:var(--muted)}
+.ok{color:var(--ok);font-weight:800}
+
+/* ---------- Header ---------- */
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:22px;padding:12px 24px}
+.logo{font-family:var(--display);font-size:2.1rem;letter-spacing:1px;color:var(--red);line-height:1;cursor:pointer;white-space:nowrap}
+.logo span{color:var(--ink)}
+.nav-links{display:flex;gap:6px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links button{background:none;border:0;padding:8px 8px;font-size:.86rem;font-weight:600;color:var(--muted);border-radius:6px;white-space:nowrap}
+.nav-links button:hover{color:var(--ink);background:var(--panel)}
+.nav-links button.active{color:var(--red)}
+.btn-theory{background:var(--red);color:#fff;border:0;border-radius:6px;padding:10px 18px;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px;white-space:nowrap;box-shadow:0 4px 14px rgba(229,9,20,.28)}
+.btn-theory:hover{background:var(--red-dark)}
+
+main{max-width:1320px;margin:0 auto;padding:0 24px 80px}
+
+/* ---------- Home ---------- */
+.hero{position:relative;margin:28px 0 10px;padding:56px 48px;border-radius:14px;overflow:hidden;background:linear-gradient(115deg,#141414 0%,#2a0204 55%,#831010 100%);color:#fff}
+.hero::after{content:"";position:absolute;right:-60px;top:-40px;width:520px;height:520px;background:radial-gradient(circle,rgba(229,9,20,.55),transparent 65%)}
+.hero > *{position:relative;z-index:1}
+.kicker{font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:.85rem;color:#ff6b72}
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(3rem,7vw,6.2rem);line-height:.92;margin:12px 0 18px;letter-spacing:1px}
+.hero p{font-size:1.25rem;max-width:760px;color:#e8e8e8;margin:0 0 26px}
+.hero .chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.hero .chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff}
+.btn-play{background:#fff;color:var(--ink);border:0;border-radius:6px;padding:14px 30px;font-size:1.15rem;font-weight:800;display:inline-flex;align-items:center;gap:10px}
+.btn-play:hover{background:#e9e9e9}
+.btn-ghost{background:rgba(109,109,110,.7);color:#fff;border:0;border-radius:6px;padding:14px 26px;font-size:1.15rem;font-weight:700;margin-left:10px}
+.btn-ghost:hover{background:rgba(109,109,110,.5)}
+
+.row-title{font-family:var(--display);font-size:2.4rem;font-weight:400;margin:44px 0 14px;letter-spacing:.5px;display:flex;align-items:baseline;gap:14px}
+.row-title small{font-family:var(--body);font-size:1rem;color:var(--muted);letter-spacing:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:18px}
+.card{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;background:var(--ink);color:#fff;min-height:250px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;transition:transform .25s ease, box-shadow .25s ease;border:0;text-align:left;font-size:inherit}
+.card:hover,.card:focus-visible{transform:scale(1.035);box-shadow:0 18px 40px rgba(0,0,0,.28);z-index:2;outline:none}
+.card .bg{position:absolute;inset:0;background:linear-gradient(160deg,var(--c) 0%,#141414 78%)}
+.card .num{position:absolute;top:6px;right:16px;font-family:var(--display);font-size:7.5rem;line-height:1;color:rgba(255,255,255,.13)}
+.card > *:not(.bg){position:relative}
+.card .badge{display:inline-block;background:var(--red);color:#fff;font-size:.72rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 9px;border-radius:3px;margin-bottom:10px;align-self:flex-start}
+.card h3{font-family:var(--display);font-weight:400;font-size:2.05rem;line-height:1;margin:0 0 6px;letter-spacing:.5px}
+.card .emp{font-size:.95rem;color:#d4d4d4;margin:0}
+.card .meta{display:flex;gap:10px;margin-top:12px;font-size:.82rem;color:#bdbdbd;font-weight:600}
+.card .meta span{border:1px solid #555;padding:2px 8px;border-radius:3px}
+
+.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.mcard{border:2px solid var(--line);border-radius:10px;padding:20px;background:#fff}
+.mcard .big{font-family:var(--display);font-size:2.6rem;color:var(--red);line-height:1}
+.mcard h4{margin:6px 0 6px;font-size:1.15rem}
+.mcard p{margin:0;color:var(--muted);font-size:.98rem}
+
+/* ---------- Case view ---------- */
+.case-head{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:end;margin:30px 0 8px;padding-bottom:22px;border-bottom:4px solid var(--red)}
+.case-num{font-family:var(--display);font-size:clamp(6rem,13vw,10rem);line-height:.8;color:var(--red)}
+.case-head .kicker{color:var(--red)}
+.case-head h1{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,5.4vw,4.6rem);line-height:.95;margin:6px 0 10px;letter-spacing:.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--panel);color:var(--ink2)}
+.chip.red{background:var(--red);color:#fff}
+
+.tabs{display:flex;gap:4px;margin:22px 0 0;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:0;border-bottom:4px solid transparent;margin-bottom:-1px;padding:12px 20px;font-size:1.08rem;font-weight:700;color:var(--muted)}
+.tabs button.active{color:var(--ink);border-bottom-color:var(--red)}
+.tabs button:hover{color:var(--ink)}
+
+.statement{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:34px;margin-top:28px}
+.statement .txt p{font-size:1.28rem;line-height:1.65;margin:0 0 18px}
+.question{background:var(--ink);color:#fff;border-radius:12px;padding:26px 28px;position:relative;overflow:hidden}
+.question::before{content:"?";position:absolute;right:14px;top:-34px;font-family:var(--display);font-size:11rem;color:rgba(229,9,20,.35);line-height:1}
+.question .kicker{color:#ff6b72}
+.question p{font-size:1.55rem;font-weight:700;line-height:1.35;margin:10px 0 22px;position:relative}
+.question .btn-play{position:relative}
+.dtable{width:100%;border-collapse:collapse;font-size:1.05rem;margin:6px 0 20px;background:#fff}
+.dtable th{background:var(--ink);color:#fff;font-weight:700;text-align:center;padding:11px 12px;font-size:.95rem}
+.dtable th:first-child{text-align:left;border-top-left-radius:8px}
+.dtable th:last-child{border-top-right-radius:8px}
+.dtable td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:center}
+.dtable td:first-child{text-align:left;font-weight:600}
+.dtable tr:nth-child(even) td{background:#FAFAFA}
+.dtable .big-n{font-family:var(--display);font-size:2rem;color:var(--red);font-weight:400}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* stepper */
+.progress{display:flex;gap:5px;margin:28px 0 8px}
+.progress button{flex:1;height:7px;border:0;border-radius:4px;background:#E3E3E3;padding:0;transition:background .2s}
+.progress button.done{background:#F4A3A7}
+.progress button.cur{background:var(--red)}
+.progress button:hover{background:var(--red-dark)}
+.step-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.step-count{font-family:var(--display);font-size:1.6rem;color:var(--muted);letter-spacing:1px}
+.step-count b{color:var(--red);font-weight:400;font-size:2.2rem}
+.toggle-all{background:none;border:2px solid var(--ink);border-radius:6px;padding:7px 14px;font-weight:700;font-size:.92rem}
+.toggle-all:hover{background:var(--ink);color:#fff}
+
+.step{background:#fff;border:1px solid var(--line);border-left:8px solid var(--red);border-radius:12px;padding:28px 32px 30px;margin:12px 0 18px;box-shadow:0 8px 30px rgba(0,0,0,.05);animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.step .tag{display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--red);background:var(--red-soft);padding:4px 10px;border-radius:4px}
+.step h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,3.6vw,2.9rem);line-height:1;margin:12px 0 10px;letter-spacing:.4px}
+.step h2 .n{color:var(--red);margin-right:10px}
+.step .lead{font-size:1.22rem;margin:0 0 16px;max-width:980px}
+.blocks{display:flex;flex-wrap:wrap;align-items:center;gap:16px 18px;margin-top:10px}
+.blocks > .full{flex-basis:100%}
+.theory-link{margin-top:20px;background:var(--red-soft2);border:1.5px dashed #F4A3A7;color:var(--red-dark);border-radius:8px;padding:8px 14px;font-weight:700;font-size:.92rem}
+.theory-link:hover{background:var(--red-soft)}
+
+/* matrices */
+.mwrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px;max-width:100%}
+.mlabel{font-weight:800;font-size:.9rem;color:var(--muted);letter-spacing:.3px}
+.mrow{display:flex;align-items:center;gap:10px;max-width:100%;overflow-x:auto}
+.matrix{position:relative;display:inline-grid;padding:6px 14px;font-family:var(--math);font-size:1.6rem;line-height:1.2}
+.matrix::before,.matrix::after{content:"";position:absolute;top:0;bottom:0;width:10px;border:3px solid var(--ink)}
+.matrix::before{left:0;border-right:0}
+.matrix::after{right:0;border-left:0}
+.matrix .c{padding:6px 12px;text-align:center;min-width:2.2em;display:flex;align-items:center;justify-content:center}
+.matrix .c.bar{border-left:3px solid var(--red);margin-left:6px;padding-left:16px}
+.matrix .c.hl{background:var(--red-soft);color:var(--red-dark);font-weight:700}
+.matrix .c.hc{background:#FFE1E3;color:var(--red-dark);font-weight:700}
+.matrix.tri .c.zero{color:var(--red);font-weight:700}
+.matrix.ident .c.one{color:var(--red);font-weight:700}
+.matrix.ident::before,.matrix.ident::after{border-color:var(--red)}
+.frac{display:inline-flex;flex-direction:column;align-items:center;font-size:.72em;line-height:1.05;vertical-align:middle}
+.frac span:first-child{border-bottom:2px solid currentColor;padding:0 3px}
+.rowops{display:flex;flex-direction:column;gap:2px}
+.rowops div{font-family:var(--mono);font-size:.98rem;font-weight:600;color:var(--red-dark);white-space:nowrap}
+.arrow{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 6px}
+.arrow .ar{font-size:2.2rem;color:var(--red);line-height:1}
+.arrow .ops{background:var(--ink);color:#fff;border-radius:8px;padding:8px 12px}
+.arrow .ops div{font-family:var(--mono);font-size:.98rem;white-space:nowrap}
+.sym{font-family:var(--math);font-size:2.4rem;color:var(--muted)}
+
+.eq{background:var(--panel);border-radius:10px;padding:16px 22px;flex-basis:100%;font-family:var(--math);font-size:1.38rem;line-height:1.75;overflow-x:auto}
+.eq.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
+.eq.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px;font-size:1.18rem}
+.eq i{font-style:italic}
+.eq .muted{font-family:var(--body);font-size:.95rem;font-weight:600}
+.bigres{flex-basis:100%;text-align:center;padding:22px 16px;border-radius:12px;background:linear-gradient(120deg,#141414,#3a0508);color:#fff}
+.bigres .t{font-family:var(--display);font-size:clamp(2.2rem,5vw,4rem);line-height:1;letter-spacing:1px}
+.bigres .s{font-size:1.05rem;color:#ff9aa0;font-weight:700;margin-top:6px;letter-spacing:1px;text-transform:uppercase}
+.note{flex-basis:100%;border-radius:10px;padding:14px 18px;font-size:1.12rem;border-left:6px solid}
+.note.ok{background:var(--ok-soft);border-color:var(--ok)}
+.note.warn{background:var(--warn-soft);border-color:var(--warn)}
+.note.info{background:var(--panel);border-color:var(--muted)}
+
+.step-nav{display:flex;justify-content:space-between;gap:12px;margin-top:6px;flex-wrap:wrap}
+.btn{border:0;border-radius:6px;padding:14px 24px;font-size:1.08rem;font-weight:800;display:inline-flex;align-items:center;gap:10px}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:hover{background:var(--red-dark)}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.dark:hover{background:#000}
+.btn.light{background:var(--panel);color:var(--ink)}
+.btn.light:hover{background:#e7e7e2}
+.btn:disabled{opacity:.35;cursor:default}
+.kbd-hint{font-size:.85rem;color:var(--muted);text-align:center;margin-top:12px}
+.kbd{border:1px solid #ccc;border-bottom-width:3px;border-radius:4px;padding:0 6px;font-family:var(--mono);font-size:.8rem}
+
+.case-foot{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.case-foot button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:18px 20px;text-align:left;font-size:1rem}
+.case-foot button:hover{border-color:var(--red)}
+.case-foot button.next{text-align:right}
+.case-foot small{display:block;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;font-size:.75rem}
+.case-foot strong{font-family:var(--display);font-weight:400;font-size:1.7rem;letter-spacing:.4px}
+
+/* ---------- Theory modal ---------- */
+.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(20,20,20,.62);backdrop-filter:blur(3px)}
+.modal.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.mbox{background:#fff;width:min(1180px,100%);height:min(86vh,860px);border-radius:14px;display:grid;grid-template-columns:300px 1fr;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:pop .25s ease}
+@keyframes pop{from{transform:scale(.96)}to{transform:none}}
+.mside{background:var(--ink);color:#fff;padding:22px 14px;overflow-y:auto}
+.mside .ttl{font-family:var(--display);font-size:2rem;color:var(--red);padding:0 10px 12px;letter-spacing:.5px}
+.mside .grp{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#8c8c8c;font-weight:800;padding:14px 10px 6px}
+.mside button{display:block;width:100%;text-align:left;background:none;border:0;color:#d6d6d6;padding:9px 12px;border-radius:6px;font-size:.98rem;font-weight:600}
+.mside button:hover{background:#2a2a2a;color:#fff}
+.mside button.active{background:var(--red);color:#fff}
+.mmain{position:relative;overflow-y:auto;padding:34px 40px 40px}
+.mclose{position:sticky;top:0;float:right;background:var(--ink);color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:1.5rem;line-height:1;z-index:2}
+.mclose:hover{background:var(--red)}
+.mmain h2{font-family:var(--display);font-weight:400;font-size:3.1rem;line-height:1;margin:0 0 6px;letter-spacing:.5px}
+.mmain h3{font-size:1.2rem;margin:24px 0 8px;color:var(--red-dark)}
+.mmain p,.mmain li{font-size:1.12rem}
+.mmain .formula{background:var(--ink);color:#fff;font-family:var(--math);font-size:1.7rem;border-radius:10px;padding:16px 22px;margin:14px 0;text-align:center}
+.mmain .formula .red{color:#ff6b72}
+.mmain .demo{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:12px 0;padding:14px;background:var(--panel);border-radius:10px}
+.mmain .matrix{font-size:1.3rem}
+.mmain table{border-collapse:collapse;width:100%;font-size:1rem;margin:10px 0}
+.mmain th{background:var(--red);color:#fff;padding:9px;text-align:left}
+.mmain td{padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+.err{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.err div{border-radius:8px;padding:12px 14px;font-size:1.02rem}
+.err .bad{background:var(--red-soft);border-left:5px solid var(--red)}
+.err .good{background:var(--ok-soft);border-left:5px solid var(--ok)}
+
+.toast-theory{position:fixed;right:22px;bottom:22px;z-index:40;padding:12px 20px;border-radius:999px;background:var(--red);color:#fff;border:0;font-weight:800;font-size:1rem;box-shadow:0 10px 26px rgba(229,9,20,.45);display:flex;align-items:center;gap:8px}
+.toast-theory:hover{background:var(--red-dark);transform:scale(1.06)}
+
+footer{border-top:1px solid var(--line);padding:26px 24px;text-align:center;color:var(--muted);font-size:.9rem}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  body{font-size:17px}
+  .nav{padding:10px 16px;gap:12px}
+  .nav-links{display:none}
+  .btn-theory{display:none}
+  .logo{font-size:1.8rem}
+  .toast-theory{right:14px;bottom:14px;padding:10px 16px}
+  main{padding:0 16px 70px}
+  .hero{padding:36px 22px}
+  .statement{grid-template-columns:minmax(0,1fr)}
+  .case-head{grid-template-columns:1fr;gap:4px}
+  .step{padding:22px 18px;border-left-width:6px}
+  .matrix{font-size:1.25rem;padding:4px 12px}
+  .matrix .c{padding:4px 7px;min-width:1.7em}
+  .eq{font-size:1.12rem;padding:14px 14px}
+  .eq.cols2,.eq.cols3{grid-template-columns:1fr}
+  .mbox{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:92vh}
+  .mside{display:flex;gap:6px;overflow-x:auto;padding:12px;align-items:center}
+  .mside .ttl,.mside .grp{display:none}
+  .mside button{white-space:nowrap;width:auto;flex:none}
+  .mmain{padding:20px 18px}
+  .mmain h2{font-size:2.3rem}
+  .case-foot{grid-template-columns:1fr}
+  .err{grid-template-columns:1fr}
+  .btn-ghost{margin:10px 0 0}
+}
+@media print{
+  header,.toast-theory,.progress,.step-nav,.tabs,.theory-link,.case-foot,.kbd-hint,.toggle-all{display:none!important}
+  .step{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo" onclick="go('#/')" title="Inicio">ÁLGEBRA<span>·CASOS</span></div>
+    <nav class="nav-links" id="navLinks"></nav>
+    <button class="btn-theory" onclick="openTheory()" aria-haspopup="dialog">📘 Teoría para recordar</button>
+  </div>
+</header>
+
+<main id="app"></main>
+<footer>Álgebra Superior · Unidad 1 (Matrices y Determinantes) y Unidad 2 (Sistemas de Ecuaciones Lineales) · Casos empresariales resueltos y verificados</footer>
+
+<button class="toast-theory" onclick="openTheory()" title="Abrir teoría (tecla T)">📘 Teoría</button>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Teoría" onclick="if(event.target===this)closeTheory()">
+  <div class="mbox">
+    <aside class="mside" id="mside"></aside>
+    <section class="mmain" id="mmain"></section>
+  </div>
+</div>
+
+<script>
+const CASES = [{"id": "muebles", "short": "Gauss", "num": 1, "title": "Plan de producción semanal", "empresa": "Maderas del Oriente S.A.S.", "sector": "Manufactura · Muebles", "metodo": "Eliminación Gaussiana", "unidad": "U1 + U2", "color": "#E50914", "enunciado": ["<b>Maderas del Oriente S.A.S.</b>, una fábrica de muebles de Bucaramanga, produce <b>sillas, mesas y escritorios</b>. Cada producto pasa por tres departamentos: <b>corte, ensamble y acabado</b>.", "El jefe de producción quiere un plan semanal que use <b>exactamente</b> todas las horas disponibles de cada departamento, para no pagar horas extra ni tener personal ocioso."], "tabla": {"head": ["Departamento", "Silla", "Mesa", "Escritorio", "Horas disponibles"], "rows": [["Corte", "1 h", "2 h", "3 h", "<b>85 h</b>"], ["Ensamble", "2 h", "3 h", "2 h", "<b>100 h</b>"], ["Acabado", "3 h", "2 h", "4 h", "<b>140 h</b>"]]}, "pregunta": "¿Cuántas sillas, mesas y escritorios debe fabricar la empresa cada semana?", "steps": [{"title": "Definir las variables", "tag": "Modelación", "html": "Lo primero es nombrar lo que no conocemos. La pregunta es <b>cuántas unidades de cada producto</b> se deben fabricar por semana.", "blocks": [{"type": "table", "head": ["Variable", "Significado", "Unidad"], "rows": [["<b class='red'>x</b>", "Sillas fabricadas por semana", "unidades"], ["<b class='red'>y</b>", "Mesas fabricadas por semana", "unidades"], ["<b class='red'>z</b>", "Escritorios fabricados por semana", "unidades"]]}], "theory": "modelar"}, {"title": "Plantear el sistema de ecuaciones", "tag": "Modelación", "html": "Cada departamento genera una ecuación: <b>horas que consume cada producto × cantidad = horas disponibles</b>.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Corte:</span> <i>x</i> + 2<i>y</i> + 3<i>z</i> = 85", "<span class='muted'>Ensamble:</span> 2<i>x</i> + 3<i>y</i> + 2<i>z</i> = 100", "<span class='muted'>Acabado:</span> 3<i>x</i> + 2<i>y</i> + 4<i>z</i> = 140"]}], "theory": "modelar"}, {"title": "Escribir la forma matricial A·X = b y la matriz aumentada", "tag": "Unidad 1 · Matrices", "html": "Los coeficientes forman la matriz <b>A</b> (3×3), las incógnitas el vector <b>X</b> y las horas disponibles el vector <b>b</b>. Uniendo A y b obtenemos la <b>matriz aumentada [A | b]</b>.", "blocks": [{"type": "mat", "label": "A", "M": [["1", "2", "3"], ["2", "3", "2"], ["3", "2", "4"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "·"}, {"type": "mat", "label": "X", "M": [["x"], ["y"], ["z"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "b", "M": [["85"], ["100"], ["140"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "break"}, {"type": "mat", "label": "[A | b]", "M": [["1", "2", "3", "85"], ["2", "3", "2", "100"], ["3", "2", "4", "140"]], "bar": 3, "hl": [], "ops": [], "cls": ""}], "theory": "aumentada"}, {"title": "Verificar que haya solución única: det(A)", "tag": "Unidad 1 · Determinantes", "html": "Antes de eliminar, comprobamos que el sistema sea <b>compatible determinado</b>. Usamos la regla de Sarrus.", "blocks": [{"type": "eq", "lines": ["Diagonales ↘ (+): 1·3·4 + 2·2·3 + 3·2·2 = 12 + 12 + 12 = <b>36</b>", "Diagonales ↙ (−): 3·3·3 + 1·2·2 + 2·2·4 = 27 + 4 + 16 = <b>47</b>", "det(A) = 36 − 47 = <b class='red'>-11</b>"]}, {"type": "note", "html": "Como det(A) = -11 ≠ 0, el sistema tiene <b>solución única (S.C.D.)</b>.", "kind": "ok"}], "theory": "det"}, {"title": "Hacer ceros debajo del primer pivote", "tag": "Operaciones por fila", "html": "El pivote de la fila 1 es <b>1</b>. Restamos múltiplos de F1 para anular la columna de <i>x</i> en F2 y F3.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "2", "3", "85"], ["2", "3", "2", "100"], ["3", "2", "4", "140"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − 2F1", "F3 → F3 − 3F1"]}, {"type": "mat", "label": "Después", "M": [["1", "2", "3", "85"], ["0", "-1", "-4", "-70"], ["0", "-4", "-5", "-115"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Hacer cero debajo del segundo pivote", "tag": "Operaciones por fila", "html": "Ahora el pivote de la fila 2 es <b>−1</b>. Para anular el −4 de F3 usamos F3 − 4F2.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "2", "3", "85"], ["0", "-1", "-4", "-70"], ["0", "-4", "-5", "-115"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F3 → F3 − 4F2"]}, {"type": "mat", "label": "Después", "M": [["1", "2", "3", "85"], ["0", "-1", "-4", "-70"], ["0", "0", "11", "165"]], "bar": 3, "hl": [2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Matriz triangular superior: sustitución regresiva", "tag": "Eliminación Gaussiana", "html": "Ya tenemos ceros debajo de la diagonal. Leemos cada fila como ecuación, <b>de abajo hacia arriba</b>.", "blocks": [{"type": "mat", "label": "Matriz escalonada", "M": [["1", "2", "3", "85"], ["0", "-1", "-4", "-70"], ["0", "0", "11", "165"]], "bar": 3, "hl": [], "ops": [], "cls": "tri"}, {"type": "eq", "lines": ["F3: 11<i>z</i> = 165 → <b class='red'>z = 15</b>", "F2: −<i>y</i> − 4(15) = −70 → −<i>y</i> = −10 → <b class='red'>y = 10</b>", "F1: <i>x</i> + 2(10) + 3(15) = 85 → <i>x</i> = 85 − 65 → <b class='red'>x = 20</b>"]}], "theory": "gauss"}, {"title": "Verificación: A·X = b", "tag": "Comprobación", "html": "Multiplicamos la matriz A por el vector solución. Si obtenemos exactamente las horas disponibles, la respuesta es correcta.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Corte:</span> 1(20) + 2(10) + 3(15) = <b>85</b> <span class='ok'>✔</span>", "<span class='muted'>Ensamble:</span> 2(20) + 3(10) + 2(15) = <b>100</b> <span class='ok'>✔</span>", "<span class='muted'>Acabado:</span> 3(20) + 2(10) + 4(15) = <b>140</b> <span class='ok'>✔</span>"]}], "theory": "producto"}, {"title": "Respuesta e interpretación", "tag": "Conclusión", "html": "", "blocks": [{"type": "big", "text": "20 sillas · 10 mesas · 15 escritorios", "sub": "por semana"}, {"type": "note", "html": "Con este plan se utilizan <b>el 100 % de las horas</b> de los tres departamentos (85 h de corte, 100 h de ensamble y 140 h de acabado), sin tiempo ocioso ni horas extra.", "kind": "ok"}], "theory": null}], "respuesta": "x = 20, y = 10, z = 15"}, {"id": "cafe", "short": "Gauss-Jordan", "num": 2, "title": "Mezcla de café de origen", "empresa": "Tostadora Chicamocha", "sector": "Alimentos · Café especial", "metodo": "Gauss-Jordan", "unidad": "U1 + U2", "color": "#B20710", "enunciado": ["La <b>Tostadora Chicamocha</b> prepara un lote de <b>100 kg</b> de su mezcla insignia combinando café verde de tres orígenes: <b>Santander, Huila y Nariño</b>.", "El precio por kilo es de <b>$40 000</b> (Santander), <b>$50 000</b> (Huila) y <b>$60 000</b> (Nariño). El presupuesto del lote es exactamente <b>$4 700 000</b>.", "Por identidad de marca, la cantidad de café de Santander debe ser <b>igual a la suma</b> de Huila y Nariño."], "pregunta": "¿Cuántos kilos de cada origen debe llevar el lote?", "steps": [{"title": "Definir las variables", "tag": "Modelación", "html": "Queremos conocer <b>cuántos kilos de cada origen</b> lleva el lote de 100 kg.", "blocks": [{"type": "table", "head": ["Variable", "Significado"], "rows": [["<b class='red'>x</b>", "kg de café de Santander"], ["<b class='red'>y</b>", "kg de café del Huila"], ["<b class='red'>z</b>", "kg de café de Nariño"]]}], "theory": "modelar"}, {"title": "Plantear el sistema", "tag": "Modelación", "html": "Traducimos cada condición del enunciado a una ecuación lineal. Ojo con la tercera: «Santander = Huila + Nariño» se reescribe pasando todo al lado izquierdo.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Peso total:</span> <i>x</i> + <i>y</i> + <i>z</i> = 100", "<span class='muted'>Costo (miles $):</span> 40<i>x</i> + 50<i>y</i> + 60<i>z</i> = 4700", "<span class='muted'>Proporción:</span> <i>x</i> = <i>y</i> + <i>z</i> → <i>x</i> − <i>y</i> − <i>z</i> = 0"]}], "theory": "modelar"}, {"title": "Matriz aumentada", "tag": "Unidad 1 · Matrices", "html": "Organizamos coeficientes y términos independientes en [A | b].", "blocks": [{"type": "mat", "label": "[A | b]", "M": [["1", "1", "1", "100"], ["40", "50", "60", "4700"], ["1", "-1", "-1", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}], "theory": "aumentada"}, {"title": "Ceros en la columna 1", "tag": "Operaciones por fila", "html": "Con el pivote 1 de F1 eliminamos el 40 de F2 y el 1 de F3.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "1", "100"], ["40", "50", "60", "4700"], ["1", "-1", "-1", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − 40F1", "F3 → F3 − F1"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "1", "100"], ["0", "10", "20", "700"], ["0", "-2", "-2", "-100"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Convertir el pivote de F2 en 1", "tag": "Operaciones por fila", "html": "Gauss-Jordan exige pivotes iguales a <b>1</b>. Multiplicamos F2 por 1/10.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "1", "100"], ["0", "10", "20", "700"], ["0", "-2", "-2", "-100"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → (1/10)·F2"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "1", "100"], ["0", "1", "2", "70"], ["0", "-2", "-2", "-100"]], "bar": 3, "hl": [1], "ops": [], "cls": ""}], "theory": "gaussjordan"}, {"title": "Cero debajo del pivote de F2", "tag": "Operaciones por fila", "html": "Eliminamos el −2 de F3 sumándole 2 veces F2.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "1", "100"], ["0", "1", "2", "70"], ["0", "-2", "-2", "-100"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F3 → F3 + 2F2"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "1", "100"], ["0", "1", "2", "70"], ["0", "0", "2", "40"]], "bar": 3, "hl": [2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Pivote de F3 igual a 1", "tag": "Operaciones por fila", "html": "Multiplicamos F3 por 1/2. Aquí termina la fase de Gauss (triangular) y empieza la de Jordan.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "1", "100"], ["0", "1", "2", "70"], ["0", "0", "2", "40"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F3 → (1/2)·F3"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "1", "100"], ["0", "1", "2", "70"], ["0", "0", "1", "20"]], "bar": 3, "hl": [2], "ops": [], "cls": ""}], "theory": "gaussjordan"}, {"title": "Ceros encima del pivote de F3", "tag": "Operaciones por fila", "html": "Ahora hacemos ceros <b>hacia arriba</b>: eliminamos el 2 de F2 y el 1 de F1.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "1", "100"], ["0", "1", "2", "70"], ["0", "0", "1", "20"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − 2F3", "F1 → F1 − F3"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "0", "80"], ["0", "1", "0", "30"], ["0", "0", "1", "20"]], "bar": 3, "hl": [0, 1], "ops": [], "cls": ""}], "theory": "gaussjordan"}, {"title": "Cero encima del pivote de F2", "tag": "Operaciones por fila", "html": "Último cero: eliminamos el 1 de F1 con F1 − F2. Debe quedar la matriz identidad.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "0", "80"], ["0", "1", "0", "30"], ["0", "0", "1", "20"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F1 → F1 − F2"]}, {"type": "mat", "label": "Después", "M": [["1", "0", "0", "50"], ["0", "1", "0", "30"], ["0", "0", "1", "20"]], "bar": 3, "hl": [0], "ops": [], "cls": ""}], "theory": "gaussjordan"}, {"title": "Lectura directa de la solución [ I | X ]", "tag": "Gauss-Jordan", "html": "El lado izquierdo es la <b>matriz identidad</b>, así que la última columna ES la solución. No se necesita sustitución regresiva.", "blocks": [{"type": "mat", "label": "[ I | X ]", "M": [["1", "0", "0", "50"], ["0", "1", "0", "30"], ["0", "0", "1", "20"]], "bar": 3, "hl": [], "ops": [], "cls": "ident"}, {"type": "eq", "lines": ["<b class='red'>x = 50</b> kg de Santander", "<b class='red'>y = 30</b> kg del Huila", "<b class='red'>z = 20</b> kg de Nariño"]}], "theory": "gaussjordan"}, {"title": "Verificación: A·X = b", "tag": "Comprobación", "html": "Sustituimos en las tres ecuaciones originales.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Peso:</span> 1(50) + 1(30) + 1(20) = <b>100</b> <span class='ok'>✔</span>", "<span class='muted'>Costo:</span> 40(50) + 50(30) + 60(20) = <b>4700</b> <span class='ok'>✔</span>", "<span class='muted'>Proporción:</span> 1(50) + (-1)(30) + (-1)(20) = <b>0</b> <span class='ok'>✔</span>"]}], "theory": "producto"}, {"title": "Respuesta e interpretación", "tag": "Conclusión", "html": "", "blocks": [{"type": "big", "text": "50 kg · 30 kg · 20 kg", "sub": "Santander · Huila · Nariño"}, {"type": "note", "html": "El lote cuesta exactamente <b>$4 700 000</b> en grano verde, es decir <b>$47 000 por kilo</b> de mezcla, y la mitad del lote es café santandereano, como exige la marca.", "kind": "ok"}], "theory": null}], "respuesta": "x = 50, y = 30, z = 20"}, {"id": "inversion", "short": "Cramer", "num": 3, "title": "Portafolio de inversión", "empresa": "Comercializadora Andina Ltda.", "sector": "Finanzas corporativas", "metodo": "Regla de Cramer", "unidad": "U1 + U2", "color": "#831010", "enunciado": ["La <b>Comercializadora Andina</b> tiene <b>$120 millones</b> de excedentes de liquidez y decide invertirlos en tres instrumentos: un <b>CDT</b> (6 % anual), <b>bonos corporativos</b> (8 %) y un <b>fondo de acciones</b> (12 %).", "La junta directiva espera un rendimiento total de <b>$9,8 millones</b> al año. Además, su política de riesgo establece que lo invertido en el CDT debe ser <b>$20 millones menos</b> que la suma de bonos y acciones."], "pregunta": "¿Cuánto dinero debe asignarse a cada instrumento?", "steps": [{"title": "Definir las variables", "tag": "Modelación", "html": "Las incógnitas son los <b>montos invertidos</b> (en millones de pesos).", "blocks": [{"type": "table", "head": ["Variable", "Instrumento", "Rendimiento anual"], "rows": [["<b class='red'>x</b>", "CDT", "6 %"], ["<b class='red'>y</b>", "Bonos corporativos", "8 %"], ["<b class='red'>z</b>", "Fondo de acciones", "12 %"]]}], "theory": "modelar"}, {"title": "Plantear el sistema", "tag": "Modelación", "html": "La ecuación de rendimiento es 0,06<i>x</i> + 0,08<i>y</i> + 0,12<i>z</i> = 9,8. Multiplicamos por 100 para trabajar con enteros (operación válida: escalar una ecuación).", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Capital total:</span> <i>x</i> + <i>y</i> + <i>z</i> = 120", "<span class='muted'>Rendimiento ×100:</span> 6<i>x</i> + 8<i>y</i> + 12<i>z</i> = 980", "<span class='muted'>Política de riesgo:</span> <i>x</i> = <i>y</i> + <i>z</i> − 20 → <i>x</i> − <i>y</i> − <i>z</i> = -20"]}], "theory": "modelar"}, {"title": "Condiciones de Cramer y determinante D", "tag": "Unidad 1 · Determinantes", "html": "Cramer solo funciona si la matriz es <b>cuadrada</b> (3 ecuaciones, 3 incógnitas ✔) y si <b>D = det(A) ≠ 0</b>. Calculamos D con Sarrus.", "blocks": [{"type": "mat", "label": "A", "M": [["1", "1", "1"], ["6", "8", "12"], ["1", "-1", "-1"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "eq", "lines": ["Diagonales ↘ (+): 1·8·(-1) + 1·12·1 + 1·6·(-1) = (-8) + 12 + (-6) = <b>-2</b>", "Diagonales ↙ (−): 1·8·1 + 1·12·(-1) + 1·6·(-1) = 8 + (-12) + (-6) = <b>-10</b>", "D = -2 − (-10) = <b class='red'>8</b>"]}, {"type": "note", "html": "D = 8 ≠ 0 → podemos aplicar Cramer.", "kind": "ok"}], "theory": "cramer"}, {"title": "Determinante Dx: b reemplaza la columna de x", "tag": "Regla de Cramer", "html": "Copiamos A y sustituimos la <b>columna 1</b> por el vector de términos independientes b = (120, 980, −20).", "blocks": [{"type": "mat", "label": "Dx", "M": [["120", "1", "1"], ["980", "8", "12"], ["-20", "-1", "-1"]], "bar": null, "hl": [], "hlcol": [0], "ops": [], "cls": ""}, {"type": "eq", "lines": ["Diagonales ↘ (+): 120·8·(-1) + 1·12·(-20) + 1·980·(-1) = (-960) + (-240) + (-980) = <b>-2180</b>", "Diagonales ↙ (−): 1·8·(-20) + 120·12·(-1) + 1·980·(-1) = (-160) + (-1440) + (-980) = <b>-2580</b>", "Dx = -2180 − (-2580) = <b class='red'>400</b>"]}, {"type": "big", "text": "x = Dx/D = 400/8 = 50", "sub": "millones"}], "theory": "cramer"}, {"title": "Determinante Dy: b reemplaza la columna de y", "tag": "Regla de Cramer", "html": "Copiamos A y sustituimos la <b>columna 2</b> por el vector de términos independientes b = (120, 980, −20).", "blocks": [{"type": "mat", "label": "Dy", "M": [["1", "120", "1"], ["6", "980", "12"], ["1", "-20", "-1"]], "bar": null, "hl": [], "hlcol": [1], "ops": [], "cls": ""}, {"type": "eq", "lines": ["Diagonales ↘ (+): 1·980·(-1) + 120·12·1 + 1·6·(-20) = (-980) + 1440 + (-120) = <b>340</b>", "Diagonales ↙ (−): 1·980·1 + 1·12·(-20) + 120·6·(-1) = 980 + (-240) + (-720) = <b>20</b>", "Dy = 340 − 20 = <b class='red'>320</b>"]}, {"type": "big", "text": "y = Dy/D = 320/8 = 40", "sub": "millones"}], "theory": "cramer"}, {"title": "Determinante Dz: b reemplaza la columna de z", "tag": "Regla de Cramer", "html": "Copiamos A y sustituimos la <b>columna 3</b> por el vector de términos independientes b = (120, 980, −20).", "blocks": [{"type": "mat", "label": "Dz", "M": [["1", "1", "120"], ["6", "8", "980"], ["1", "-1", "-20"]], "bar": null, "hl": [], "hlcol": [2], "ops": [], "cls": ""}, {"type": "eq", "lines": ["Diagonales ↘ (+): 1·8·(-20) + 1·980·1 + 120·6·(-1) = (-160) + 980 + (-720) = <b>100</b>", "Diagonales ↙ (−): 120·8·1 + 1·980·(-1) + 1·6·(-20) = 960 + (-980) + (-120) = <b>-140</b>", "Dz = 100 − (-140) = <b class='red'>240</b>"]}, {"type": "big", "text": "z = Dz/D = 240/8 = 30", "sub": "millones"}], "theory": "cramer"}, {"title": "Verificación: A·X = b", "tag": "Comprobación", "html": "", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Capital:</span> 1(50) + 1(40) + 1(30) = <b>120</b> <span class='ok'>✔</span>", "<span class='muted'>Rendimiento:</span> 6(50) + 8(40) + 12(30) = <b>980</b> <span class='ok'>✔</span>", "<span class='muted'>Riesgo:</span> 1(50) + (-1)(40) + (-1)(30) = <b>-20</b> <span class='ok'>✔</span>"]}], "theory": "producto"}, {"title": "Respuesta e interpretación", "tag": "Conclusión", "html": "", "blocks": [{"type": "big", "text": "$50 M · $40 M · $30 M", "sub": "CDT · Bonos · Acciones"}, {"type": "note", "html": "La empresa obtiene <b>$9,8 millones</b> de rendimiento anual (tasa efectiva del 8,17 % sobre los $120 M) y cumple la política de riesgo: el CDT ($50 M) es $20 M menor que lo invertido en bonos + acciones ($70 M).", "kind": "ok"}], "theory": null}], "respuesta": "x = 50, y = 40, z = 30"}, {"id": "panaderia", "short": "Inversa", "num": 4, "title": "Consumo total de inventario", "empresa": "Panadería La Espiga", "sector": "Alimentos · Panificación", "metodo": "Inversa por adjunta", "unidad": "U1 + U2", "color": "#E50914", "enunciado": ["La <b>Panadería La Espiga</b> elabora tres productos por lotes: <b>pan</b>, <b>galletas</b> y <b>tortas</b>. Cada lote consume harina, azúcar y mantequilla (en kg) según la tabla.", "La gerencia quiere <b>agotar exactamente</b> el inventario de insumos perecederos cada semana. Tiene los inventarios de dos semanas distintas."], "tabla": {"head": ["Insumo (kg)", "Pan", "Galletas", "Torta", "Semana 1", "Semana 2"], "rows": [["Harina", "2", "5", "3", "<b>62</b>", "<b>81</b>"], ["Azúcar", "1", "2", "1", "<b>26</b>", "<b>33</b>"], ["Mantequilla", "1", "3", "3", "<b>40</b>", "<b>53</b>"]]}, "pregunta": "¿Cuántos lotes de cada producto deben hornearse en cada semana?", "steps": [{"title": "Definir variables y plantear el sistema", "tag": "Modelación", "html": "Sean <i>x</i>, <i>y</i>, <i>z</i> los <b>lotes</b> de pan, galletas y tortas en cada semana. Cada insumo da una ecuación. Para las dos semanas usamos <b>A·X = B</b>, donde X es una matriz 3×2 (cada columna corresponde a una semana). Como A es la misma, conviene hallar <b>A⁻¹</b> una sola vez.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Harina:</span> 2<i>x</i> + 5<i>y</i> + 3<i>z</i> = b₁", "<span class='muted'>Azúcar:</span> <i>x</i> + 2<i>y</i> + <i>z</i> = b₂", "<span class='muted'>Mantequilla:</span> <i>x</i> + 3<i>y</i> + 3<i>z</i> = b₃"]}, {"type": "mat", "label": "A", "M": [["2", "5", "3"], ["1", "2", "1"], ["1", "3", "3"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "·"}, {"type": "mat", "label": "X (semanas 1 y 2)", "M": [["x₁", "x₂"], ["y₁", "y₂"], ["z₁", "z₂"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "B = [b semana 1 | b semana 2]", "M": [["62", "81"], ["26", "33"], ["40", "53"]], "bar": null, "hl": [], "ops": [], "cls": ""}], "theory": "inversa"}, {"title": "Determinante por cofactores (fila 1)", "tag": "Unidad 1 · Determinantes", "html": "Expandimos por la primera fila: det(A) = a₁₁C₁₁ + a₁₂C₁₂ + a₁₃C₁₃, con C<sub>ij</sub> = (−1)<sup>i+j</sup>M<sub>ij</sub>.", "blocks": [{"type": "mat", "label": "A", "M": [["2", "5", "3"], ["1", "2", "1"], ["1", "3", "3"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "eq", "lines": ["det(A) = 2·|2 1; 3 3| − 5·|1 1; 1 3| + 3·|1 2; 1 3|", "= 2(3) − 5(2) + 3(1)", "= 6 − 10 + 3 = <b class='red'>-1</b>"]}, {"type": "note", "html": "det(A) = -1 ≠ 0 → A es <b>invertible</b> y el sistema tiene solución única.", "kind": "ok"}], "theory": "cofactores"}, {"title": "Matriz de cofactores", "tag": "Unidad 1 · Adjunta", "html": "Para cada posición eliminamos su fila y su columna, calculamos el determinante 2×2 (menor) y aplicamos el signo del tablero <b>(+ − +)</b>.", "blocks": [{"type": "eq", "lines": ["C<sub>11</sub> = +|2 1; 3 3| = +(3) = <b>3</b>", "C<sub>12</sub> = −|1 1; 1 3| = −(2) = <b>-2</b>", "C<sub>13</sub> = +|1 2; 1 3| = +(1) = <b>1</b>", "C<sub>21</sub> = −|5 3; 3 3| = −(6) = <b>-6</b>", "C<sub>22</sub> = +|2 3; 1 3| = +(3) = <b>3</b>", "C<sub>23</sub> = −|2 5; 1 3| = −(1) = <b>-1</b>", "C<sub>31</sub> = +|5 3; 2 1| = +(-1) = <b>-1</b>", "C<sub>32</sub> = −|2 3; 1 1| = −(-1) = <b>1</b>", "C<sub>33</sub> = +|2 5; 1 2| = +(-1) = <b>-1</b>"], "cols": 3}, {"type": "mat", "label": "Cof(A)", "M": [["3", "-2", "1"], ["-6", "3", "-1"], ["-1", "1", "-1"]], "bar": null, "hl": [], "ops": [], "cls": ""}], "theory": "adjunta"}, {"title": "Adjunta e inversa: A⁻¹ = adj(A) / det(A)", "tag": "Unidad 1 · Inversa", "html": "La adjunta es la <b>transpuesta</b> de la matriz de cofactores (filas ↔ columnas). Luego dividimos cada elemento entre det(A) = −1.", "blocks": [{"type": "mat", "label": "adj(A) = Cof(A)ᵀ", "M": [["3", "-6", "-1"], ["-2", "3", "1"], ["1", "-1", "-1"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "→"}, {"type": "mat", "label": "A⁻¹ = adj(A)/(−1)", "M": [["-3", "6", "1"], ["2", "-3", "-1"], ["-1", "1", "1"]], "bar": null, "hl": [], "ops": [], "cls": "ident"}], "theory": "adjunta"}, {"title": "Comprobar que A·A⁻¹ = I", "tag": "Comprobación", "html": "Antes de usar la inversa verificamos que el producto dé la identidad. Ejemplo de la entrada (1,1): 2(−3) + 5(2) + 3(−1) = −6 + 10 − 3 = 1.", "blocks": [{"type": "mat", "label": "A", "M": [["2", "5", "3"], ["1", "2", "1"], ["1", "3", "3"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "·"}, {"type": "mat", "label": "A⁻¹", "M": [["-3", "6", "1"], ["2", "-3", "-1"], ["-1", "1", "1"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "I", "M": [["1", "0", "0"], ["0", "1", "0"], ["0", "0", "1"]], "bar": null, "hl": [], "ops": [], "cls": "ident"}], "theory": "inversa"}, {"title": "Resolver ambas semanas: X = A⁻¹·B", "tag": "Producto matricial", "html": "Multiplicamos A⁻¹ (3×3) por B (3×2). El resultado es una matriz 3×2: <b>cada columna es el plan de una semana</b>. Cada entrada = fila de A⁻¹ · columna de B.", "blocks": [{"type": "mat", "label": "A⁻¹", "M": [["-3", "6", "1"], ["2", "-3", "-1"], ["-1", "1", "1"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "·"}, {"type": "mat", "label": "B", "M": [["62", "81"], ["26", "33"], ["40", "53"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "X", "M": [["10", "8"], ["6", "10"], ["4", "5"]], "bar": null, "hl": [], "ops": [], "cls": "ident"}, {"type": "eq", "lines": ["Semana 1, <i>x</i>: (-3)(62) + 6(26) + 1(40) = <b class='red'>10</b>", "Semana 2, <i>x</i>: (-3)(81) + 6(33) + 1(53) = <b class='red'>8</b>", "Semana 1, <i>y</i>: 2(62) + (-3)(26) + (-1)(40) = <b class='red'>6</b>", "Semana 2, <i>y</i>: 2(81) + (-3)(33) + (-1)(53) = <b class='red'>10</b>", "Semana 1, <i>z</i>: (-1)(62) + 1(26) + 1(40) = <b class='red'>4</b>", "Semana 2, <i>z</i>: (-1)(81) + 1(33) + 1(53) = <b class='red'>5</b>"], "cols": 2}], "theory": "producto"}, {"title": "Verificación con el inventario original", "tag": "Comprobación", "html": "", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Harina S1:</span> 2(10) + 5(6) + 3(4) = <b>62</b> <span class='ok'>✔</span>", "<span class='muted'>Azúcar S1:</span> 1(10) + 2(6) + 1(4) = <b>26</b> <span class='ok'>✔</span>", "<span class='muted'>Mantequilla S1:</span> 1(10) + 3(6) + 3(4) = <b>40</b> <span class='ok'>✔</span>", "<span class='muted'>Harina S2:</span> 2(8) + 5(10) + 3(5) = <b>81</b> <span class='ok'>✔</span>", "<span class='muted'>Azúcar S2:</span> 1(8) + 2(10) + 1(5) = <b>33</b> <span class='ok'>✔</span>", "<span class='muted'>Mantequilla S2:</span> 1(8) + 3(10) + 3(5) = <b>53</b> <span class='ok'>✔</span>"], "cols": 2}], "theory": "producto"}, {"title": "Respuesta e interpretación", "tag": "Conclusión", "html": "", "blocks": [{"type": "table", "head": ["", "Pan", "Galletas", "Tortas"], "rows": [["<b>Semana 1</b>", "<b class='big-n'>10</b> lotes", "<b class='big-n'>6</b> lotes", "<b class='big-n'>4</b> lotes"], ["<b>Semana 2</b>", "<b class='big-n'>8</b> lotes", "<b class='big-n'>10</b> lotes", "<b class='big-n'>5</b> lotes"]]}, {"type": "note", "html": "Ventaja empresarial: calculada <b>una vez</b> la inversa, cualquier inventario futuro se resuelve con un solo producto A⁻¹·b, sin repetir la eliminación.", "kind": "ok"}], "theory": null}], "respuesta": "S1: 10, 6, 4 · S2: 8, 10, 5"}, {"id": "distribuidora", "short": "Matrices", "num": 5, "title": "Auditoría de precios por sucursal", "empresa": "Distribuidora El Surtidor", "sector": "Comercio mayorista", "metodo": "Suma de matrices + Gauss", "unidad": "U1 + U2", "color": "#B20710", "enunciado": ["La <b>Distribuidora El Surtidor</b> tiene tres sucursales en el área metropolitana de Bucaramanga. Se perdió la lista de precios del bimestre y el auditor solo cuenta con las <b>cajas vendidas</b> de aceite, arroz y panela en julio y agosto, y el <b>ingreso total</b> de cada sucursal en el bimestre.", "Los precios fueron los mismos en las tres sucursales durante los dos meses."], "tabla": {"head": ["Sucursal", "Julio (aceite, arroz, panela)", "Agosto (aceite, arroz, panela)", "Ingreso bimestre"], "rows": [["Cabecera", "20 · 30 · 10", "10 · 20 · 10", "<b>$970 mil</b>"], ["Girón", "15 · 25 · 20", "15 · 15 · 10", "<b>$1 100 mil</b>"], ["Floridablanca", "10 · 40 · 15", "20 · 10 · 15", "<b>$1 150 mil</b>"]]}, "pregunta": "¿Cuál fue el precio por caja de cada producto?", "steps": [{"title": "Sumar las matrices de ventas: Q = Q<sub>jul</sub> + Q<sub>ago</sub>", "tag": "Unidad 1 · Suma de matrices", "html": "Ambas matrices son 3×3 (sucursales × productos), así que se pueden sumar <b>elemento a elemento</b>: q<sub>ij</sub> = julio<sub>ij</sub> + agosto<sub>ij</sub>.", "blocks": [{"type": "mat", "label": "Q julio", "M": [["20", "30", "10"], ["15", "25", "20"], ["10", "40", "15"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "+"}, {"type": "mat", "label": "Q agosto", "M": [["10", "20", "10"], ["15", "15", "10"], ["20", "10", "15"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "Q total", "M": [["30", "50", "20"], ["30", "40", "30"], ["30", "50", "30"]], "bar": null, "hl": [], "ops": [], "cls": "ident"}], "theory": "operacionesmat"}, {"title": "Plantear el sistema Q·p = I", "tag": "Modelación", "html": "Sea p = (<i>x</i>, <i>y</i>, <i>z</i>) el precio por caja (miles de $) de aceite, arroz y panela. El ingreso de cada sucursal es <b>fila de Q · vector de precios</b>.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Cabecera:</span> 30<i>x</i> + 50<i>y</i> + 20<i>z</i> = 970", "<span class='muted'>Girón:</span> 30<i>x</i> + 40<i>y</i> + 30<i>z</i> = 1100", "<span class='muted'>Floridablanca:</span> 30<i>x</i> + 50<i>y</i> + 30<i>z</i> = 1150"]}, {"type": "mat", "label": "[Q | I]", "M": [["30", "50", "20", "970"], ["30", "40", "30", "1100"], ["30", "50", "30", "1150"]], "bar": 3, "hl": [], "ops": [], "cls": ""}], "theory": "modelar"}, {"title": "Simplificar: multiplicar cada fila por 1/10", "tag": "Operaciones por fila", "html": "Todas las entradas son múltiplos de 10. Multiplicar una fila por un escalar ≠ 0 no cambia la solución y facilita los cálculos.", "blocks": [{"type": "mat", "label": "Antes", "M": [["30", "50", "20", "970"], ["30", "40", "30", "1100"], ["30", "50", "30", "1150"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F1 → (1/10)·F1", "F2 → (1/10)·F2", "F3 → (1/10)·F3"]}, {"type": "mat", "label": "Después", "M": [["3", "5", "2", "97"], ["3", "4", "3", "110"], ["3", "5", "3", "115"]], "bar": 3, "hl": [0, 1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Ceros debajo del pivote 3", "tag": "Operaciones por fila", "html": "Restamos F1 a F2 y a F3.", "blocks": [{"type": "mat", "label": "Antes", "M": [["3", "5", "2", "97"], ["3", "4", "3", "110"], ["3", "5", "3", "115"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − F1", "F3 → F3 − F1"]}, {"type": "mat", "label": "Después", "M": [["3", "5", "2", "97"], ["0", "-1", "1", "13"], ["0", "0", "1", "18"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Sustitución regresiva", "tag": "Eliminación Gaussiana", "html": "La matriz ya es triangular superior (¡la fila 3 quedó lista!).", "blocks": [{"type": "mat", "label": "Escalonada", "M": [["3", "5", "2", "97"], ["0", "-1", "1", "13"], ["0", "0", "1", "18"]], "bar": 3, "hl": [], "ops": [], "cls": "tri"}, {"type": "eq", "lines": ["F3: <i>z</i> = 18 → <b class='red'>z = 18</b>", "F2: −<i>y</i> + 18 = 13 → <b class='red'>y = 5</b>", "F1: 3<i>x</i> + 5(5) + 2(18) = 97 → 3<i>x</i> = 36 → <b class='red'>x = 12</b>"]}], "theory": "gauss"}, {"title": "Verificación y dato extra: ingresos por mes", "tag": "Producto matricial", "html": "Comprobamos Q·p = I y, con el mismo producto, separamos los ingresos de cada mes. Por la propiedad distributiva: (Q<sub>jul</sub> + Q<sub>ago</sub>)·p = Q<sub>jul</sub>·p + Q<sub>ago</sub>·p.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Cabecera:</span> 30(12) + 50(5) + 20(18) = <b>970</b> <span class='ok'>✔</span>", "<span class='muted'>Girón:</span> 30(12) + 40(5) + 30(18) = <b>1100</b> <span class='ok'>✔</span>", "<span class='muted'>Floridablanca:</span> 30(12) + 50(5) + 30(18) = <b>1150</b> <span class='ok'>✔</span>"]}, {"type": "table", "head": ["Sucursal", "Julio (Q<sub>jul</sub>·p)", "Agosto (Q<sub>ago</sub>·p)", "Total"], "rows": [["Cabecera", "$570 mil", "$400 mil", "<b>$970 mil</b>"], ["Girón", "$665 mil", "$435 mil", "<b>$1100 mil</b>"], ["Floridablanca", "$590 mil", "$560 mil", "<b>$1150 mil</b>"]]}], "theory": "producto"}, {"title": "Respuesta e interpretación", "tag": "Conclusión", "html": "", "blocks": [{"type": "big", "text": "Aceite $12 000 · Arroz $5 000 · Panela $18 000", "sub": "precio por caja"}, {"type": "note", "html": "La auditoría reconstruyó la lista de precios a partir de cantidades e ingresos. Floridablanca es la sucursal que más factura ($1 150 000 en el bimestre).", "kind": "ok"}], "theory": null}], "respuesta": "x = 12, y = 5, z = 18"}, {"id": "kits", "short": "S.C.I.", "num": 6, "title": "Kits corporativos de fin de año", "empresa": "Regalos Empresariales Panaché", "sector": "Comercio · Merchandising", "metodo": "Gauss · Infinitas soluciones", "unidad": "U2 · S.C.I.", "color": "#831010", "enunciado": ["<b>Panaché</b> arma kits de regalo para empresas en tres versiones: <b>Básico</b> (1 bolígrafo, 2 libretas), <b>Estándar</b> (2 bolígrafos, 1 libreta) y <b>Premium</b> (3 bolígrafos, 3 libretas).", "Cada artículo lleva una etiqueta con el logo del cliente. En bodega hay <b>120 bolígrafos, 120 libretas y 240 etiquetas</b>, y se quiere usar todo el inventario."], "tabla": {"head": ["Artículo", "Básico", "Estándar", "Premium", "Inventario"], "rows": [["Bolígrafos", "1", "2", "3", "<b>120</b>"], ["Libretas", "2", "1", "3", "<b>120</b>"], ["Etiquetas", "3", "3", "6", "<b>240</b>"]]}, "pregunta": "¿Cuántos kits de cada tipo pueden armarse? ¿La respuesta es única?", "steps": [{"title": "Variables y sistema", "tag": "Modelación", "html": "Sean <i>x</i>, <i>y</i>, <i>z</i> el número de kits Básico, Estándar y Premium. Cada artículo del inventario debe usarse completo.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Bolígrafos:</span> <i>x</i> + 2<i>y</i> + 3<i>z</i> = 120", "<span class='muted'>Libretas:</span> 2<i>x</i> + <i>y</i> + 3<i>z</i> = 120", "<span class='muted'>Etiquetas:</span> 3<i>x</i> + 3<i>y</i> + 6<i>z</i> = 240"]}, {"type": "mat", "label": "[A | b]", "M": [["1", "2", "3", "120"], ["2", "1", "3", "120"], ["3", "3", "6", "240"]], "bar": 3, "hl": [], "ops": [], "cls": ""}], "theory": "modelar"}, {"title": "Calcular det(A)", "tag": "Unidad 1 · Determinantes", "html": "Revisamos el determinante antes de elegir método (error frecuente: aplicar Cramer a ciegas).", "blocks": [{"type": "eq", "lines": ["Diagonales ↘ (+): 1·1·6 + 2·3·3 + 3·2·3 = 6 + 18 + 18 = <b>42</b>", "Diagonales ↙ (−): 3·1·3 + 1·3·3 + 2·2·6 = 9 + 9 + 24 = <b>42</b>", "det(A) = 42 − 42 = <b class='red'>0</b>"]}, {"type": "note", "html": "det(A) = 0 → <b>NO hay solución única</b>. Cramer no sirve. El sistema es S.C.I. (infinitas) o S.I. (ninguna); Gauss nos dirá cuál.", "kind": "warn"}], "theory": "clasificacion"}, {"title": "Ceros en la columna 1", "tag": "Operaciones por fila", "html": "Pivote 1 en F1.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "2", "3", "120"], ["2", "1", "3", "120"], ["3", "3", "6", "240"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − 2F1", "F3 → F3 − 3F1"]}, {"type": "mat", "label": "Después", "M": [["1", "2", "3", "120"], ["0", "-3", "-3", "-120"], ["0", "-3", "-3", "-120"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Cero debajo del segundo pivote", "tag": "Operaciones por fila", "html": "F2 y F3 quedaron iguales: al restarlas aparece una fila completa de ceros.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "2", "3", "120"], ["0", "-3", "-3", "-120"], ["0", "-3", "-3", "-120"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F3 → F3 − F2"]}, {"type": "mat", "label": "Después", "M": [["1", "2", "3", "120"], ["0", "-3", "-3", "-120"], ["0", "0", "0", "0"]], "bar": 3, "hl": [2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Interpretar la fila de ceros", "tag": "Clasificación", "html": "La última fila dice 0<i>x</i> + 0<i>y</i> + 0<i>z</i> = 0, que <b>siempre se cumple</b>. Quedan 2 ecuaciones útiles para 3 incógnitas → <b>una variable libre</b>.", "blocks": [{"type": "mat", "label": "Escalonada", "M": [["1", "2", "3", "120"], ["0", "-3", "-3", "-120"], ["0", "0", "0", "0"]], "bar": 3, "hl": [2], "ops": [], "cls": "tri"}, {"type": "note", "html": "Fila 0 = 0 → <b>Sistema Compatible Indeterminado (S.C.I.)</b>: infinitas soluciones. La ecuación de etiquetas era la suma de las otras dos (no aportaba información nueva).", "kind": "warn"}], "theory": "clasificacion"}, {"title": "Solución paramétrica", "tag": "Gauss · S.C.I.", "html": "Tomamos <b>z = t</b> como parámetro libre y despejamos de abajo hacia arriba.", "blocks": [{"type": "eq", "lines": ["F2: −3<i>y</i> − 3<i>t</i> = −120 → <b class='red'>y = 40 − t</b>", "F1: <i>x</i> + 2(40 − t) + 3t = 120 → <b class='red'>x = 40 − t</b>", "<b class='red'>z = t</b>"]}, {"type": "big", "text": "(x, y, z) = (40 − t, 40 − t, t)", "sub": "con t entero y 0 ≤ t ≤ 40"}], "theory": "clasificacion"}, {"title": "Restricción del negocio: cantidades no negativas", "tag": "Interpretación", "html": "Matemáticamente hay infinitas soluciones reales, pero en la empresa los kits <b>no pueden ser negativos ni fraccionarios</b>: 40 − t ≥ 0 y t ≥ 0, con <b>t entero</b>. Por tanto, <b>t ∈ {0, 1, …, 40}</b>: hay <b>41 combinaciones empresariales posibles</b>. Algunas opciones válidas (todas verificadas en las 3 ecuaciones):", "blocks": [{"type": "table", "head": ["t", "Básico (x)", "Estándar (y)", "Premium (z)", "Total kits"], "rows": [["0", "40", "40", "0", "80"], ["10", "30", "30", "10", "70"], ["20", "20", "20", "20", "60"], ["25", "15", "15", "25", "55"], ["30", "10", "10", "30", "50"], ["40", "0", "0", "40", "40"]]}], "theory": "clasificacion"}, {"title": "Decisión: el cliente pide 25 kits Premium", "tag": "Conclusión", "html": "Un dato adicional fija el parámetro: t = 25.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Bolígrafos:</span> 1(15) + 2(15) + 3(25) = <b>120</b> <span class='ok'>✔</span>", "<span class='muted'>Libretas:</span> 2(15) + 1(15) + 3(25) = <b>120</b> <span class='ok'>✔</span>", "<span class='muted'>Etiquetas:</span> 3(15) + 3(15) + 6(25) = <b>240</b> <span class='ok'>✔</span>"]}, {"type": "big", "text": "15 Básicos · 15 Estándar · 25 Premium", "sub": "t = 25"}, {"type": "note", "html": "Lección: cuando un sistema empresarial es S.C.I., el modelo no está «mal»; indica que <b>falta una condición</b> (un pedido, un presupuesto, una meta) para tomar la decisión.", "kind": "ok"}], "theory": null}], "respuesta": "(40 − t, 40 − t, t), t entero, 0 ≤ t ≤ 40"}, {"id": "combos", "short": "S.I.", "num": 7, "title": "Pedido imposible de combos", "empresa": "Burger Express Santander", "sector": "Restaurantes · Comida rápida", "metodo": "Gauss · Sin solución", "unidad": "U2 · S.I.", "color": "#E50914", "enunciado": ["<b>Burger Express</b> recibe un pedido para un evento corporativo: <b>50 hamburguesas, 60 porciones de papas y 100 bebidas</b>. Solo vende por combos.", "El administrador intenta armar el pedido combinando sus tres combos, pero no logra cuadrarlo."], "tabla": {"head": ["Contenido", "Clásico", "Doble Papa", "Doble Carne", "Pedido"], "rows": [["Hamburguesas", "1", "1", "2", "<b>50</b>"], ["Papas", "1", "2", "1", "<b>60</b>"], ["Bebidas", "2", "3", "3", "<b>100</b>"]]}, "pregunta": "¿Cuántos combos de cada tipo satisfacen exactamente el pedido? Si no es posible, ¿por qué?", "steps": [{"title": "Variables y sistema", "tag": "Modelación", "html": "Sean <i>x</i>, <i>y</i>, <i>z</i> el número de combos Clásico, Doble Papa y Doble Carne del pedido.", "blocks": [{"type": "eq", "lines": ["<span class='muted'>Hamburguesas:</span> <i>x</i> + <i>y</i> + 2<i>z</i> = 50", "<span class='muted'>Porciones de papas:</span> <i>x</i> + 2<i>y</i> + <i>z</i> = 60", "<span class='muted'>Bebidas:</span> 2<i>x</i> + 3<i>y</i> + 3<i>z</i> = 100"]}, {"type": "mat", "label": "[A | b]", "M": [["1", "1", "2", "50"], ["1", "2", "1", "60"], ["2", "3", "3", "100"]], "bar": 3, "hl": [], "ops": [], "cls": ""}], "theory": "modelar"}, {"title": "Calcular det(A)", "tag": "Unidad 1 · Determinantes", "html": "", "blocks": [{"type": "eq", "lines": ["Diagonales ↘ (+): 1·2·3 + 1·1·2 + 2·1·3 = 6 + 2 + 6 = <b>14</b>", "Diagonales ↙ (−): 2·2·2 + 1·1·3 + 1·1·3 = 8 + 3 + 3 = <b>14</b>", "det(A) = 14 − 14 = <b class='red'>0</b>"]}, {"type": "note", "html": "det(A) = 0 → no hay solución única. Hay que seguir con Gauss para saber si son infinitas o ninguna.", "kind": "warn"}], "theory": "clasificacion"}, {"title": "Ceros en la columna 1", "tag": "Operaciones por fila", "html": "Pivote 1 en F1.", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "2", "50"], ["1", "2", "1", "60"], ["2", "3", "3", "100"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − F1", "F3 → F3 − 2F1"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "2", "50"], ["0", "1", "-1", "10"], ["0", "1", "-1", "0"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Cero debajo del segundo pivote", "tag": "Operaciones por fila", "html": "F3 − F2 elimina toda la parte izquierda de la fila 3… pero ¡no la derecha!", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "1", "2", "50"], ["0", "1", "-1", "10"], ["0", "1", "-1", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F3 → F3 − F2"]}, {"type": "mat", "label": "Después", "M": [["1", "1", "2", "50"], ["0", "1", "-1", "10"], ["0", "0", "0", "-10"]], "bar": 3, "hl": [2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Interpretar: fila de ceros = constante", "tag": "Clasificación", "html": "La fila 3 dice 0<i>x</i> + 0<i>y</i> + 0<i>z</i> = −10, es decir <b>0 = −10</b>: una contradicción.", "blocks": [{"type": "mat", "label": "Escalonada", "M": [["1", "1", "2", "50"], ["0", "1", "-1", "10"], ["0", "0", "0", "-10"]], "bar": 3, "hl": [2], "ops": [], "cls": "tri"}, {"type": "big", "text": "0 = −10  ✘", "sub": "Sistema Incompatible (S.I.)"}, {"type": "note", "html": "No existe ninguna combinación de combos que cumpla el pedido. Geométricamente, los tres planos no tienen un punto común.", "kind": "warn"}], "theory": "clasificacion"}, {"title": "Diagnóstico empresarial", "tag": "Interpretación", "html": "¿Por qué ocurre? Cada combo trae <b>tantas bebidas como hamburguesas + papas</b> (1+1=2, 1+2=3, 2+1=3). Por tanto cualquier pedido armado con combos debe cumplir:", "blocks": [{"type": "big", "text": "Bebidas = Hamburguesas + Papas", "sub": "50 + 60 = 110 ≠ 100"}, {"type": "note", "html": "El cliente pidió <b>100 bebidas</b>, pero los combos obligan a entregar <b>110</b>. La matriz detectó una inconsistencia en el pedido.", "kind": "warn"}], "theory": "clasificacion"}, {"title": "Propuesta: ajustar el pedido a 110 bebidas", "tag": "Conclusión", "html": "Si el cliente acepta 110 bebidas, la fila 3 se vuelve 0 = 0 y el sistema pasa a ser S.C.I. con solución <i>x</i> = 40 − 3t, <i>y</i> = 10 + t, <i>z</i> = t. Por ejemplo con t = 5:", "blocks": [{"type": "mat", "label": "Pedido corregido", "M": [["1", "1", "2", "50"], ["0", "1", "-1", "10"], ["0", "0", "0", "0"]], "bar": 3, "hl": [2], "ops": [], "cls": "tri"}, {"type": "eq", "lines": ["<span class='muted'>Hamburguesas:</span> 1(25) + 1(15) + 2(5) = <b>50</b> <span class='ok'>✔</span>", "<span class='muted'>Papas:</span> 1(25) + 2(15) + 1(5) = <b>60</b> <span class='ok'>✔</span>", "<span class='muted'>Bebidas:</span> 2(25) + 3(15) + 3(5) = <b>110</b> <span class='ok'>✔</span>"]}, {"type": "big", "text": "25 Clásicos · 15 Doble Papa · 5 Doble Carne", "sub": "con 110 bebidas"}], "theory": null}], "respuesta": "Sin solución (S.I.)"}, {"id": "leontief", "short": "Homogéneo", "num": 8, "title": "Equilibrio de un clúster regional", "empresa": "Clúster Agroindustrial de Santander", "sector": "Economía · Modelo de Leontief", "metodo": "Sistema homogéneo", "unidad": "U1 + U2", "color": "#B20710", "enunciado": ["Un <b>clúster empresarial</b> cerrado está formado por tres sectores: <b>Agroindustria, Manufactura y Servicios</b>. Todo lo que produce cada sector se consume dentro del mismo clúster.", "La Cámara de Comercio quiere saber qué ingresos debe tener cada sector para que <b>ninguno gaste más de lo que recibe</b> (equilibrio). La tabla muestra qué fracción de la producción de cada sector (columna) consume cada sector (fila)."], "tabla": {"head": ["Consume ↓ / Produce →", "Agro", "Manufactura", "Servicios"], "rows": [["Agro", "1/2", "1/4", "2/5"], ["Manufactura", "1/4", "1/2", "2/5"], ["Servicios", "1/4", "1/4", "1/5"]]}, "pregunta": "¿En qué proporción deben estar los ingresos? Si Servicios ingresa $25 000 millones, ¿cuánto ingresan los demás?", "steps": [{"title": "Matriz de intercambio E", "tag": "Unidad 1 · Matrices", "html": "La entrada e<sub>ij</sub> es la fracción de lo que produce el sector <i>j</i> que consume el sector <i>i</i>. Cada <b>columna suma 1</b> (todo lo producido se reparte dentro del clúster).", "blocks": [{"type": "mat", "label": "E", "M": [["1/2", "1/4", "2/5"], ["1/4", "1/2", "2/5"], ["1/4", "1/4", "1/5"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "note", "html": "Columna Agro: 1/2 + 1/4 + 1/4 = 1 ✔ · Columna Manufactura: 1/4 + 1/2 + 1/4 = 1 ✔ · Columna Servicios: 2/5 + 2/5 + 1/5 = 1 ✔", "kind": "info"}], "theory": "matrices"}, {"title": "Modelo de equilibrio: E·p = p  ⇒  (I − E)·p = 0", "tag": "Modelación", "html": "Sea p = (<i>x</i>, <i>y</i>, <i>z</i>) el ingreso de Agro, Manufactura y Servicios, <b>medido en miles de millones de pesos</b>. En equilibrio, <b>lo que cada sector gasta = lo que recibe</b>: E·p = p. Pasando todo a un lado: p − E·p = 0, o sea <b>(I − E)·p = 0</b>, un sistema <b>homogéneo</b>.", "blocks": [{"type": "mat", "label": "I", "M": [["1", "0", "0"], ["0", "1", "0"], ["0", "0", "1"]], "bar": null, "hl": [], "ops": [], "cls": "ident"}, {"type": "sym", "t": "−"}, {"type": "mat", "label": "E", "M": [["1/2", "1/4", "2/5"], ["1/4", "1/2", "2/5"], ["1/4", "1/4", "1/5"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "I − E", "M": [["1/2", "-1/4", "-2/5"], ["-1/4", "1/2", "-2/5"], ["-1/4", "-1/4", "4/5"]], "bar": null, "hl": [], "ops": [], "cls": ""}], "theory": "homogeneo"}, {"title": "Simplificar: multiplicar por 20", "tag": "Operaciones por fila", "html": "Para eliminar fracciones multiplicamos cada fila por 20 (el m.c.m. de 2, 4 y 5). El lado derecho sigue siendo 0.", "blocks": [{"type": "mat", "label": "[I − E | 0]", "M": [["1/2", "-1/4", "-2/5", "0"], ["-1/4", "1/2", "-2/5", "0"], ["-1/4", "-1/4", "4/5", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F1, F2, F3 → 20·F"]}, {"type": "mat", "label": "[20(I − E) | 0]", "M": [["10", "-5", "-8", "0"], ["-5", "10", "-8", "0"], ["-5", "-5", "16", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "¿Solo la solución trivial?", "tag": "Unidad 1 · Determinantes", "html": "Todo sistema homogéneo tiene la solución trivial p = (0,0,0), que en la economía significa «nadie produce». Habrá soluciones no triviales <b>solo si det = 0</b>.", "blocks": [{"type": "eq", "lines": ["Diagonales ↘ (+): 10·10·16 + (-5)·(-8)·(-5) + (-8)·(-5)·(-5) = 1600 + (-200) + (-200) = <b>1200</b>", "Diagonales ↙ (−): (-8)·10·(-5) + 10·(-8)·(-5) + (-5)·(-5)·16 = 400 + 400 + 400 = <b>1200</b>", "det = 1200 − 1200 = <b class='red'>0</b>"]}, {"type": "note", "html": "det = 0 → existen <b>infinitas soluciones no triviales</b> (S.C.I.).", "kind": "ok"}], "theory": "homogeneo"}, {"title": "Intercambiar filas para un pivote cómodo", "tag": "Operaciones por fila", "html": "Llevamos F2 arriba y la escalamos para tener pivote 1.", "blocks": [{"type": "mat", "label": "Antes", "M": [["10", "-5", "-8", "0"], ["-5", "10", "-8", "0"], ["-5", "-5", "16", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F1 ↔ F2", "F1 → −(1/5)·F1"]}, {"type": "mat", "label": "Después", "M": [["1", "-2", "8/5", "0"], ["10", "-5", "-8", "0"], ["-5", "-5", "16", "0"]], "bar": 3, "hl": [0, 1], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Ceros en la columna 1", "tag": "Operaciones por fila", "html": "", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "-2", "8/5", "0"], ["10", "-5", "-8", "0"], ["-5", "-5", "16", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → F2 − 10F1", "F3 → F3 + 5F1"]}, {"type": "mat", "label": "Después", "M": [["1", "-2", "8/5", "0"], ["0", "15", "-24", "0"], ["0", "-15", "24", "0"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "operaciones"}, {"title": "Pivote de F2 igual a 1 y cero debajo", "tag": "Operaciones por fila", "html": "", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "-2", "8/5", "0"], ["0", "15", "-24", "0"], ["0", "-15", "24", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F2 → (1/15)·F2", "F3 → F3 + 15F2"]}, {"type": "mat", "label": "Después", "M": [["1", "-2", "8/5", "0"], ["0", "1", "-8/5", "0"], ["0", "0", "0", "0"]], "bar": 3, "hl": [1, 2], "ops": [], "cls": ""}], "theory": "gaussjordan"}, {"title": "Cero encima del pivote de F2 (Jordan)", "tag": "Operaciones por fila", "html": "", "blocks": [{"type": "mat", "label": "Antes", "M": [["1", "-2", "8/5", "0"], ["0", "1", "-8/5", "0"], ["0", "0", "0", "0"]], "bar": 3, "hl": [], "ops": [], "cls": ""}, {"type": "arrow", "ops": ["F1 → F1 + 2F2"]}, {"type": "mat", "label": "Después", "M": [["1", "0", "-8/5", "0"], ["0", "1", "-8/5", "0"], ["0", "0", "0", "0"]], "bar": 3, "hl": [0], "ops": [], "cls": ""}], "theory": "gaussjordan"}, {"title": "Solución paramétrica", "tag": "Gauss-Jordan · Homogéneo", "html": "Forma escalonada reducida con una fila de ceros → <i>z</i> es libre.", "blocks": [{"type": "mat", "label": "Escalonada reducida", "M": [["1", "0", "-8/5", "0"], ["0", "1", "-8/5", "0"], ["0", "0", "0", "0"]], "bar": 3, "hl": [2], "ops": [], "cls": "ident"}, {"type": "eq", "lines": ["F1: <i>x</i> − (8/5)<i>z</i> = 0 → <i>x</i> = (8/5)<i>z</i>", "F2: <i>y</i> − (8/5)<i>z</i> = 0 → <i>y</i> = (8/5)<i>z</i>", "Tomando <i>z</i> = 5t para evitar fracciones:"]}, {"type": "big", "text": "p = t · (8, 8, 5)", "sub": "Agro : Manufactura : Servicios = 8 : 8 : 5"}], "theory": "homogeneo"}, {"title": "Verificación con datos reales: E·p = p", "tag": "Comprobación", "html": "Si el ingreso de Servicios es <b>$25 000 millones</b> (= 25 miles de millones), entonces 5t = 25 → t = 5 (miles de millones de pesos) y p = (40, 40, 25), en esas mismas unidades. Comprobamos que E·p devuelve el mismo vector:", "blocks": [{"type": "mat", "label": "E", "M": [["1/2", "1/4", "2/5"], ["1/4", "1/2", "2/5"], ["1/4", "1/4", "1/5"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "·"}, {"type": "mat", "label": "p", "M": [["40"], ["40"], ["25"]], "bar": null, "hl": [], "ops": [], "cls": ""}, {"type": "sym", "t": "="}, {"type": "mat", "label": "E·p", "M": [["40"], ["40"], ["25"]], "bar": null, "hl": [], "ops": [], "cls": "ident"}, {"type": "eq", "lines": ["Agro: (1/2)(40) + (1/4)(40) + (2/5)(25) = 20 + 10 + 10 = <b>40</b> <span class='ok'>✔</span>", "Manufactura: (1/4)(40) + (1/2)(40) + (2/5)(25) = 10 + 20 + 10 = <b>40</b> <span class='ok'>✔</span>", "Servicios: (1/4)(40) + (1/4)(40) + (1/5)(25) = 10 + 10 + 5 = <b>25</b> <span class='ok'>✔</span>"]}], "theory": "producto"}, {"title": "Respuesta e interpretación", "tag": "Conclusión", "html": "", "blocks": [{"type": "big", "text": "$40 000 M · $40 000 M · $25 000 M", "sub": "Agro · Manufactura · Servicios"}, {"type": "note", "html": "El sistema homogéneo no da un único valor sino la <b>proporción de equilibrio 8 : 8 : 5</b>. Basta conocer el ingreso de un sector para determinar los demás.", "kind": "ok"}], "theory": null}], "respuesta": "p = t(8, 8, 5)"}];
+
+/* ================== helpers ================== */
+const $ = s => document.querySelector(s);
+const minus = s => s.replace(/-(?=[\d(])/g,'−');
+function num(v){
+  v = String(v);
+  const m = v.match(/^(-?)(\d+)\/(\d+)$/);
+  if(m) return `${m[1]?'−':''}<span class="frac"><span>${m[2]}</span><span>${m[3]}</span></span>`;
+  return v.replace(/^-/, '−');
+}
+function mtx(M, o={}){
+  const cols = M[0].length;
+  const bar = o.bar ?? null, hl = o.hl||[], hc = o.hlcol||[];
+  let cells = '';
+  M.forEach((r,i)=> r.forEach((v,j)=>{
+    const cls = ['c'];
+    if(bar!==null && j===bar) cls.push('bar');
+    if(hl.includes(i)) cls.push('hl');
+    if(hc.includes(j)) cls.push('hc');
+    if(String(v)==='0' && j<i) cls.push('zero');
+    if(String(v)==='1' && i===j) cls.push('one');
+    cells += `<div class="${cls.join(' ')}">${num(v)}</div>`;
+  }));
+  return `<div class="matrix ${o.cls||''}" style="grid-template-columns:repeat(${cols},auto)">${cells}</div>`;
+}
+function matBlock(b){
+  return `<div class="mwrap">${b.label?`<div class="mlabel">${b.label}</div>`:''}<div class="mrow">${mtx(b.M,{bar:b.bar,hl:b.hl,hlcol:b.hlcol,cls:b.cls})}</div></div>`;
+}
+function renderBlock(b){
+  switch(b.type){
+    case 'mat': return matBlock(b);
+    case 'arrow': return `<div class="arrow"><div class="ops">${b.ops.map(o=>`<div>${o}</div>`).join('')}</div><div class="ar">⟹</div></div>`;
+    case 'sym': return `<div class="sym">${b.t}</div>`;
+    case 'break': return `<div class="full"></div>`;
+    case 'eq': return `<div class="eq ${b.cols?'cols'+b.cols:''}">${b.lines.map(l=>`<div>${minus(l)}</div>`).join('')}</div>`;
+    case 'big': return `<div class="bigres"><div class="t">${minus(b.text)}</div>${b.sub?`<div class="s">${b.sub}</div>`:''}</div>`;
+    case 'note': return `<div class="note ${b.kind}">${b.html}</div>`;
+    case 'table': return `<div class="full twrap"><table class="dtable"><thead><tr>${b.head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+  return '';
+}
+function dataTable(t){
+  return `<div class="twrap"><table class="dtable"><thead><tr>${t.head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ================== THEORY ================== */
+const THEORY = [
+ {grp:'Unidad 1 · Matrices y determinantes'},
+ {key:'matrices', t:'Matriz y tipos', h:`
+  <h2>Matriz y sus tipos</h2>
+  <p>Una <b>matriz</b> m×n es un arreglo rectangular de números con <b>m filas</b> y <b>n columnas</b>. El elemento a<sub>ij</sub> está en la fila <i>i</i>, columna <i>j</i>.</p>
+  <div class="demo">${mtx([['a₁₁','a₁₂','a₁₃'],['a₂₁','a₂₂','a₂₃']])}<span>Matriz 2×3</span></div>
+  <table><tr><th>Tipo</th><th>Característica</th><th>Ejemplo</th></tr>
+   <tr><td><b>Cuadrada</b></td><td>m = n</td><td>${mtx([['2','1'],['0','3']])}</td></tr>
+   <tr><td><b>Nula</b></td><td>todos sus elementos son 0</td><td>${mtx([['0','0'],['0','0']])}</td></tr>
+   <tr><td><b>Identidad I</b></td><td>1 en la diagonal, 0 fuera. A·I = A</td><td>${mtx([['1','0'],['0','1']],{cls:'ident'})}</td></tr>
+   <tr><td><b>Diagonal</b></td><td>ceros fuera de la diagonal</td><td>${mtx([['4','0'],['0','7']])}</td></tr>
+   <tr><td><b>Triangular superior</b></td><td>ceros debajo de la diagonal</td><td>${mtx([['1','2','3'],['0','4','5'],['0','0','6']],{cls:'tri'})}</td></tr>
+   <tr><td><b>Transpuesta Aᵀ</b></td><td>filas ↔ columnas</td><td>${mtx([['1','2'],['3','4']])} → ${mtx([['1','3'],['2','4']])}</td></tr>
+  </table>`},
+ {key:'operacionesmat', t:'Suma, escalar y transpuesta', h:`
+  <h2>Operaciones con matrices</h2>
+  <h3>Suma y resta (mismo tamaño)</h3>
+  <p>Se opera <b>elemento a elemento</b>: (A ± B)<sub>ij</sub> = a<sub>ij</sub> ± b<sub>ij</sub>.</p>
+  <div class="demo">${mtx([['2','1'],['0','3']])}<span class="sym">+</span>${mtx([['1','4'],['5','-2']])}<span class="sym">=</span>${mtx([['3','5'],['5','1']])}</div>
+  <h3>Producto por escalar</h3>
+  <p>Cada elemento se multiplica por el número k.</p>
+  <div class="demo"><span class="sym">3·</span>${mtx([['2','-1'],['0','4']])}<span class="sym">=</span>${mtx([['6','-3'],['0','12']])}</div>
+  <h3>Propiedades útiles</h3>
+  <ul><li>A + B = B + A (conmutativa) · (A + B) + C = A + (B + C)</li><li>k(A + B) = kA + kB</li><li>(A + B)·C = A·C + B·C (distributiva)</li><li>(Aᵀ)ᵀ = A · (AB)ᵀ = BᵀAᵀ</li></ul>`},
+ {key:'producto', t:'Producto matricial', h:`
+  <h2>Producto de matrices</h2>
+  <p>A (m×<b class="red">n</b>) · B (<b class="red">n</b>×p) = C (m×p). Las columnas de A deben ser iguales a las filas de B.</p>
+  <div class="formula">c<sub>ij</sub> = <span class="red">fila i de A</span> · <span class="red">columna j de B</span> = Σ a<sub>ik</sub>b<sub>kj</sub></div>
+  <div class="demo">${mtx([['1','2'],['3','4']])}<span class="sym">·</span>${mtx([['5'],['6']])}<span class="sym">=</span>${mtx([['1·5 + 2·6'],['3·5 + 4·6']])}<span class="sym">=</span>${mtx([['17'],['39']])}</div>
+  <h3>¡Cuidado!</h3>
+  <ul><li>En general <b>A·B ≠ B·A</b> (no es conmutativo).</li><li>Un sistema lineal se escribe como <b>A·X = b</b>; por eso la verificación consiste en multiplicar A por la solución.</li></ul>`},
+ {key:'det', t:'Determinante 2×2 y Sarrus', h:`
+  <h2>Determinante</h2>
+  <p>Número asociado a una matriz <b>cuadrada</b>. Indica si la matriz tiene inversa y si el sistema tiene solución única.</p>
+  <h3>Orden 2</h3>
+  <div class="formula">| a b ; c d | = <span class="red">a·d − b·c</span></div>
+  <h3>Orden 3: regla de Sarrus</h3>
+  <p>Suma de los productos de las 3 diagonales ↘ menos la suma de los productos de las 3 diagonales ↙.</p>
+  <div class="demo">${mtx([['a','b','c'],['d','e','f'],['g','h','i']])}</div>
+  <div class="formula">det = (aei + bfg + cdh) − (ceg + afh + bdi)</div>
+  <h3>Propiedades</h3>
+  <ul><li>Intercambiar dos filas cambia el signo del determinante.</li><li>Si una fila es combinación de otras (o hay fila de ceros) → <b>det = 0</b>.</li><li>Multiplicar una fila por k multiplica el det por k.</li><li>det(A·B) = det(A)·det(B) · det(Aᵀ) = det(A).</li><li>Matriz triangular: det = producto de la diagonal.</li></ul>`},
+ {key:'cofactores', t:'Cofactores (orden superior)', h:`
+  <h2>Método de cofactores</h2>
+  <p><b>Menor M<sub>ij</sub>:</b> determinante que queda al eliminar la fila <i>i</i> y la columna <i>j</i>.</p>
+  <div class="formula">C<sub>ij</sub> = <span class="red">(−1)<sup>i+j</sup></span> · M<sub>ij</sub></div>
+  <p>Tablero de signos:</p>
+  <div class="demo">${mtx([['+','−','+'],['−','+','−'],['+','−','+']])}</div>
+  <h3>Expansión por una fila</h3>
+  <div class="formula">det(A) = a<sub>11</sub>C<sub>11</sub> + a<sub>12</sub>C<sub>12</sub> + a<sub>13</sub>C<sub>13</sub></div>
+  <p>Consejo: expande por la fila o columna con <b>más ceros</b>; sirve para matrices 4×4 o mayores.</p>`},
+ {key:'adjunta', t:'Matriz adjunta', h:`
+  <h2>Matriz adjunta</h2>
+  <ol><li>Calcula la <b>matriz de cofactores</b> Cof(A).</li><li>Transpónla: <b>adj(A) = Cof(A)ᵀ</b>.</li></ol>
+  <div class="formula">A⁻¹ = <span class="red">adj(A)</span> / det(A)</div>
+  <p>Solo existe si <b>det(A) ≠ 0</b>.</p>
+  <h3>Atajo 2×2</h3>
+  <div class="demo">${mtx([['a','b'],['c','d']])}<span class="sym">⁻¹ =</span><span class="sym">1/(ad−bc) ·</span>${mtx([['d','-b'],['-c','a']])}</div>`},
+ {key:'inversa', t:'Matriz inversa', h:`
+  <h2>Matriz inversa A⁻¹</h2>
+  <p>Es la matriz que cumple <b>A·A⁻¹ = A⁻¹·A = I</b>. Existe solo si A es cuadrada y <b>det(A) ≠ 0</b>.</p>
+  <h3>Resolver sistemas con la inversa</h3>
+  <div class="formula">A·X = b &nbsp;⟹&nbsp; <span class="red">X = A⁻¹·b</span></div>
+  <p>Muy útil en empresas cuando la matriz A (la «tecnología» o receta) es fija y solo cambian los recursos b: se calcula A⁻¹ una vez y se reutiliza.</p>
+  <h3>Dos formas de hallarla</h3>
+  <ul><li><b>Adjunta:</b> A⁻¹ = adj(A)/det(A).</li><li><b>Gauss-Jordan:</b> [A | I] → operaciones por fila → [I | A⁻¹].</li></ul>`},
+ {grp:'Unidad 2 · Sistemas de ecuaciones'},
+ {key:'modelar', t:'Modelar un problema', h:`
+  <h2>Del enunciado al sistema</h2>
+  <ol><li><b>Identifica las incógnitas</b> (lo que se pregunta) y nómbralas x, y, z con sus unidades.</li>
+  <li><b>Busca las restricciones:</b> cada recurso, total o condición es una ecuación.</li>
+  <li><b>Organiza los datos en tabla</b>: filas = recursos, columnas = productos.</li>
+  <li>Reescribe condiciones como «A es igual a B + C» → <b>A − B − C = 0</b>.</li>
+  <li>Elige el método, resuelve, <b>verifica</b> e <b>interpreta</b> en el contexto.</li></ol>
+  <div class="formula">Recurso usado por unidad × cantidad = <span class="red">recurso disponible</span></div>`},
+ {key:'aumentada', t:'Forma matricial y aumentada', h:`
+  <h2>Del sistema a la matriz</h2>
+  <p>Todo sistema lineal se escribe como <b>A·X = b</b>:</p>
+  <div class="demo"><div style="font-family:var(--math);font-size:1.3rem;line-height:1.6">x + y − z = 6<br>3x − 2y + z = −5<br>x + 3y − 2z = 14</div><span class="sym">⟶</span>${mtx([['1','1','-1','6'],['3','-2','1','-5'],['1','3','-2','14']],{bar:3})}</div>
+  <ul><li><b>A</b>: matriz de coeficientes. <b>X</b>: vector de incógnitas. <b>b</b>: términos independientes.</li><li><b>[A | b]</b>: matriz aumentada; la línea vertical separa coeficientes de resultados.</li><li>Si falta una variable en una ecuación, su coeficiente es <b>0</b>.</li></ul>`},
+ {key:'operaciones', t:'Operaciones elementales', h:`
+  <h2>Operaciones elementales por fila</h2>
+  <p>No cambian la solución del sistema:</p>
+  <table><tr><th>Operación</th><th>Notación</th></tr>
+   <tr><td>Intercambiar dos filas</td><td><code>F1 ↔ F2</code></td></tr>
+   <tr><td>Multiplicar una fila por un escalar k ≠ 0</td><td><code>F2 → (1/10)·F2</code></td></tr>
+   <tr><td>Sumar a una fila un múltiplo de otra</td><td><code>F3 → F3 − 4F2</code></td></tr></table>
+  <p><b>Meta:</b> llegar a una matriz escalonada (triangular superior).</p>
+  <h3>Cómo elegir el multiplicador</h3>
+  <div class="formula">Para anular a<sub>ij</sub>: F<sub>i</sub> → F<sub>i</sub> − <span class="red">(a<sub>ij</sub> / pivote)</span>·F<sub>pivote</sub></div>
+  <p>Escribe siempre la operación al margen: evita perder signos negativos.</p>`},
+ {key:'gauss', t:'Eliminación Gaussiana', h:`
+  <h2>Eliminación Gaussiana</h2>
+  <div class="formula">[A | b] ⟶ <span class="red">[Triangular | c]</span> ⟶ sustitución regresiva</div>
+  <ol><li>Escribe la matriz aumentada.</li><li>Haz ceros <b>debajo</b> de cada pivote, columna por columna.</li><li>Con la matriz triangular, despeja la <b>última</b> variable y sustituye hacia arriba (z → y → x).</li></ol>
+  <div class="demo">${mtx([['1','1','-1','6'],['0','-5','4','-23'],['0','0','3','-6']],{bar:3,cls:'tri'})}<div style="font-family:var(--math);font-size:1.2rem">3z = −6 → z = −2<br>−5y + 4(−2) = −23 → y = 3<br>x + 3 − (−2) = 6 → x = 1</div></div>
+  <p><b>Ventaja:</b> proceso más corto; computacionalmente rápido para sistemas grandes.</p>`},
+ {key:'gaussjordan', t:'Gauss-Jordan', h:`
+  <h2>Método de Gauss-Jordan</h2>
+  <p>Extensión de Gauss: no se detiene en el triángulo. Convierte cada pivote en <b>1</b> y hace ceros <b>arriba y abajo</b>.</p>
+  <div class="formula">[A | b] ⟶ <span class="red">[ I | X ]</span></div>
+  <div class="demo">${mtx([['1','0','0','1'],['0','1','0','3'],['0','0','1','-2']],{bar:3,cls:'ident'})}<span>Solución directa: x = 1, y = 3, z = −2</span></div>
+  <ul><li>No requiere sustitución regresiva.</li><li>Útil para hallar la inversa: [A | I] → [I | A⁻¹].</li><li><b>Error frecuente:</b> detenerse con un pivote distinto de 1.</li></ul>`},
+ {key:'cramer', t:'Regla de Cramer', h:`
+  <h2>Regla de Cramer</h2>
+  <p>Resuelve con <b>cocientes de determinantes</b>, sin modificar la matriz original.</p>
+  <div class="formula">x = <span class="red">D<sub>x</sub></span>/D &nbsp;&nbsp; y = <span class="red">D<sub>y</sub></span>/D &nbsp;&nbsp; z = <span class="red">D<sub>z</sub></span>/D</div>
+  <h3>Condiciones críticas</h3>
+  <ol><li>Matriz <b>cuadrada</b> (n ecuaciones = n incógnitas).</li><li><b>D = det(A) ≠ 0</b>.</li></ol>
+  <h3>Mecánica</h3>
+  <p>D<sub>x</sub>: copia A y reemplaza la <b>columna de x</b> por el vector b. Igual para D<sub>y</sub> y D<sub>z</sub>.</p>
+  <div class="demo">${mtx([['b₁','a₁₂','a₁₃'],['b₂','a₂₂','a₂₃'],['b₃','a₃₂','a₃₃']],{hlcol:[0]})}<span>= D<sub>x</sub></span></div>
+  <p>Si D = 0, Cramer falla: el sistema es S.C.I. o S.I. → usa Gauss.</p>`},
+ {key:'clasificacion', t:'Tipos de solución', h:`
+  <h2>Clasificación de sistemas</h2>
+  <table><tr><th>Tipo</th><th>Determinante</th><th>Al escalonar</th><th>Geometría (2×2)</th></tr>
+   <tr><td><b>S.C.D.</b> Compatible determinado</td><td>det ≠ 0</td><td>Un pivote por variable</td><td>Rectas que se cortan en un punto → <b>solución única</b></td></tr>
+   <tr><td><b>S.C.I.</b> Compatible indeterminado</td><td>det = 0</td><td>Fila <b>0 0 0 | 0</b></td><td>Rectas coincidentes → <b>infinitas soluciones</b> (variable libre t)</td></tr>
+   <tr><td><b>S.I.</b> Incompatible</td><td>det = 0</td><td>Fila <b>0 0 0 | c</b>, c ≠ 0</td><td>Rectas paralelas → <b>sin solución</b></td></tr></table>
+  <div class="demo">${mtx([['1','1','2'],['0','0','1']],{bar:2,hl:[1]})}<span>x + y = 2 y 2x + 2y = 5 → 0 = 1 → <b>S.I.</b></span></div>
+  <p>En un contexto empresarial, un S.C.I. indica que <b>falta una condición</b> para decidir; un S.I. indica que los datos o el pedido son <b>inconsistentes</b>.</p>`},
+ {key:'homogeneo', t:'Sistemas homogéneos', h:`
+  <h2>Sistemas homogéneos</h2>
+  <p>Son de la forma <b>A·X = 0</b> (todos los términos independientes son cero).</p>
+  <div class="demo">${mtx([['a₁₁','a₁₂','0'],['a₂₁','a₂₂','0']],{bar:2,hlcol:[2]})}</div>
+  <ul><li><b>Siempre</b> son compatibles: tienen al menos la solución trivial X = 0.</li><li>Si det(A) ≠ 0 → <b>solo</b> la solución trivial.</li><li>Si det(A) = 0 → <b>infinitas soluciones</b> no triviales (S.C.I.), expresadas con un parámetro t.</li></ul>
+  <p>Aplicación: modelo cerrado de Leontief, <b>(I − E)·p = 0</b>, donde p da las <b>proporciones</b> de equilibrio entre sectores.</p>`},
+ {key:'errores', t:'Errores frecuentes', h:`
+  <h2>No confundas esto</h2>
+  <div class="err"><div class="bad"><b>Error:</b> aplicar Cramer a ciegas sin revisar la base.</div><div class="good"><b>Correcto:</b> calcula det(A) primero. Si det(A) = 0, detente: el sistema es indeterminado o incompatible.</div></div>
+  <div class="err"><div class="bad"><b>Error:</b> hacer multiplicaciones «mágicas» en la cabeza y perder los signos negativos.</div><div class="good"><b>Correcto:</b> anota siempre la operación (F2 − 3F1) en el margen.</div></div>
+  <div class="err"><div class="bad"><b>Error:</b> detener Gauss-Jordan antes de tener puros 1 en la diagonal.</div><div class="good"><b>Correcto:</b> la identidad exige unos en la diagonal; un pivote 3 no es el final.</div></div>
+  <div class="err"><div class="bad"><b>Error:</b> no verificar ni interpretar.</div><div class="good"><b>Correcto:</b> sustituye en las ecuaciones originales (A·X = b) y revisa que tenga sentido: cantidades no negativas, enteras, etc.</div></div>`},
+ {key:'comparar', t:'Cuadro comparativo', h:`
+  <h2>Cheat sheet de métodos</h2>
+  <table><tr><th>Dimensión</th><th>Gauss</th><th>Gauss-Jordan</th><th>Cramer</th><th>Inversa</th></tr>
+   <tr><td><b>Técnica base</b></td><td>Operaciones por filas</td><td>Operaciones por filas</td><td>Cociente de determinantes</td><td>X = A⁻¹·b</td></tr>
+   <tr><td><b>Matriz resultante</b></td><td>Triangular superior</td><td>Identidad</td><td>Matrices con columna reemplazada</td><td>A⁻¹</td></tr>
+   <tr><td><b>Velocidad</b></td><td>Alta, óptima para N grandes</td><td>Media, da la inversa</td><td>Lenta, solo n pequeño</td><td>Ideal si cambian solo los b</td></tr>
+   <tr><td><b>Condición de falla</b></td><td>Fila 0 = constante</td><td>Fila 0 = constante</td><td>det(A) = 0</td><td>det(A) = 0</td></tr></table>`}
+];
+
+function openTheory(key){
+  const items = THEORY.filter(t=>t.key);
+  key = key || (items.find(t=>t.key===state.lastTheory)?.key) || 'modelar';
+  state.lastTheory = key;
+  $('#mside').innerHTML = `<div class="ttl">Teoría</div>` + THEORY.map(t=> t.grp ? `<div class="grp">${t.grp}</div>` : `<button data-k="${t.key}" class="${t.key===key?'active':''}" onclick="openTheory('${t.key}')">${t.t}</button>`).join('');
+  const it = items.find(t=>t.key===key);
+  $('#mmain').innerHTML = `<button class="mclose" onclick="closeTheory()" aria-label="Cerrar">×</button>` + it.h;
+  $('#mmain').scrollTop = 0;
+  $('#modal').classList.add('open');
+  const act = $('#mside button.active'); if(act) act.scrollIntoView({block:'nearest',inline:'nearest'});
+}
+function closeTheory(){ $('#modal').classList.remove('open'); }
+
+/* ================== STATE / ROUTING ================== */
+const state = {lastTheory:null, all:false};
+function go(h){ location.hash = h; }
+function route(){
+  const h = location.hash || '#/';
+  const m = h.match(/^#\/caso\/(\w+)(?:\/(\w+))?(?:\/(\d+))?/);
+  if(m){
+    const c = CASES.find(x=>x.id===m[1]);
+    if(c){ renderCase(c, m[2]||'enunciado', parseInt(m[3]||'1',10)); return; }
+  }
+  renderHome();
+}
+function navLinks(cur){
+  $('#navLinks').innerHTML = `<button class="${!cur?'active':''}" onclick="go('#/')">Inicio</button>` +
+    CASES.map(c=>`<button class="${cur===c.id?'active':''}" onclick="go('#/caso/${c.id}')">${String(c.num).padStart(2,'0')} · ${c.short}</button>`).join('');
+}
+
+function renderHome(){
+  navLinks(null);
+  document.title = 'Casos Empresariales · Sistemas Lineales';
+  $('#app').innerHTML = `
+  <section class="hero">
+    <div class="kicker">Álgebra Superior · Unidades 1 y 2</div>
+    <h1>Casos empresariales<br>con sistemas lineales</h1>
+    <p>Ocho situaciones reales de negocio resueltas paso a paso con matrices, determinantes, Gauss, Gauss-Jordan, Cramer e inversa. Cada solución está <b>verificada</b> con A·X = b.</p>
+    <div class="chips"><span class="chip">8 casos</span><span class="chip">${CASES.reduce((a,c)=>a+c.steps.length,0)} pasos</span><span class="chip">S.C.D. · S.C.I. · S.I.</span><span class="chip">Sistemas homogéneos</span></div>
+    <button class="btn-play" onclick="go('#/caso/${CASES[0].id}')">▶ Empezar caso 1</button>
+    <button class="btn-ghost" onclick="openTheory()">ⓘ Repasar teoría</button>
+  </section>
+  <h2 class="row-title">Todos los casos <small>Elige uno para ver el enunciado y su recorrido de solución</small></h2>
+  <div class="cards">${CASES.map(c=>`
+    <button class="card" style="--c:${c.color}" onclick="go('#/caso/${c.id}')">
+      <div class="bg"></div><div class="num">${String(c.num).padStart(2,'0')}</div>
+      <span class="badge">${c.metodo}</span>
+      <h3>${c.title}</h3>
+      <p class="emp">${c.empresa}</p>
+      <div class="meta"><span>${c.unidad}</span><span>${c.steps.length} pasos</span></div>
+    </button>`).join('')}</div>
+  <h2 class="row-title">¿Qué método usa cada caso?</h2>
+  <div class="methods">
+    <div class="mcard"><div class="big">Gauss</div><h4>Casos 1, 5, 6, 7</h4><p>Triangular superior y sustitución regresiva. Detecta S.C.I. y S.I.</p></div>
+    <div class="mcard"><div class="big">Gauss-Jordan</div><h4>Casos 2 y 8</h4><p>Hasta la forma escalonada reducida: identidad en el caso 2; variable libre en el caso 8.</p></div>
+    <div class="mcard"><div class="big">Cramer</div><h4>Caso 3</h4><p>Cocientes de determinantes (Sarrus) con D ≠ 0.</p></div>
+    <div class="mcard"><div class="big">Inversa</div><h4>Caso 4</h4><p>Cofactores, adjunta y X = A⁻¹·B para varios escenarios.</p></div>
+  </div>`;
+  window.scrollTo(0,0);
+}
+
+function renderCase(c, view, n){
+  navLinks(c.id);
+  document.title = `Caso ${c.num} · ${c.title}`;
+  const idx = CASES.indexOf(c);
+  const prev = CASES[idx-1], next = CASES[idx+1];
+  const total = c.steps.length;
+  n = Math.min(Math.max(n,1), total);
+  const head = `
+  <section class="case-head">
+    <div class="case-num">${String(c.num).padStart(2,'0')}</div>
+    <div>
+      <div class="kicker">${c.empresa} · ${c.sector}</div>
+      <h1>${c.title}</h1>
+      <div class="chips"><span class="chip red">${c.metodo}</span><span class="chip">${c.unidad}</span><span class="chip">${total} pasos</span></div>
+    </div>
+  </section>
+  <div class="tabs" role="tablist">
+    <button class="${view==='enunciado'?'active':''}" onclick="go('#/caso/${c.id}/enunciado')">📄 Enunciado</button>
+    <button class="${view==='solucion'?'active':''}" onclick="go('#/caso/${c.id}/solucion/${view==='solucion'?n:1}')">🧮 Solución paso a paso</button>
+  </div>`;
+  let body = '';
+  if(view==='enunciado'){
+    body = `<div class="statement">
+      <div class="txt">${c.enunciado.map(p=>`<p>${p}</p>`).join('')}${c.tabla?dataTable(c.tabla):''}</div>
+      <div><div class="question"><div class="kicker">La pregunta del caso</div><p>${c.pregunta}</p>
+        <button class="btn-play" onclick="go('#/caso/${c.id}/solucion/1')">▶ Ver solución</button></div>
+        <p class="kbd-hint" style="text-align:left;margin-top:16px">Intenta resolverlo primero en papel. Usa el botón <b>Teoría</b> si necesitas recordar un método.</p></div>
+    </div>`;
+  } else {
+    const stepHTML = (s,i)=>`
+      <article class="step">
+        <span class="tag">${s.tag}</span>
+        <h2><span class="n">${i+1}.</span>${s.title}</h2>
+        ${s.html?`<p class="lead">${s.html}</p>`:''}
+        <div class="blocks">${s.blocks.map(renderBlock).join('')}</div>
+        ${s.theory?`<button class="theory-link" onclick="openTheory('${s.theory}')">📘 Recordar: ${THEORY.find(t=>t.key===s.theory)?.t||'Teoría'}</button>`:''}
+      </article>`;
+    const compact = `<details style="margin-top:22px"><summary style="cursor:pointer;font-weight:700;color:var(--muted)">Ver enunciado</summary><div style="padding-top:10px">${c.enunciado.map(p=>`<p style="font-size:1.1rem">${p}</p>`).join('')}${c.tabla?dataTable(c.tabla):''}<p style="font-size:1.2rem"><b>${c.pregunta}</b></p></div></details>`;
+    if(state.all){
+      body = compact + `<div class="step-meta" style="margin-top:20px"><div class="step-count">Recorrido completo · ${total} pasos</div><button class="toggle-all" onclick="state.all=false;route()">Ver paso a paso</button></div>` + c.steps.map(stepHTML).join('');
+    } else {
+      body = compact + `
+      <div class="progress">${c.steps.map((s,i)=>`<button title="Paso ${i+1}: ${s.title.replace(/<[^>]+>/g,'')}" class="${i+1<n?'done':''} ${i+1===n?'cur':''}" onclick="go('#/caso/${c.id}/solucion/${i+1}')"></button>`).join('')}</div>
+      <div class="step-meta"><div class="step-count">Paso <b>${n}</b> / ${total}</div><button class="toggle-all" onclick="state.all=true;route()">Ver todos los pasos</button></div>
+      ${stepHTML(c.steps[n-1], n-1)}
+      <div class="step-nav">
+        <button class="btn light" ${n===1?'disabled':''} onclick="go('#/caso/${c.id}/solucion/${n-1}')">◀ Anterior</button>
+        ${n<total?`<button class="btn primary" onclick="go('#/caso/${c.id}/solucion/${n+1}')">Siguiente paso ▶</button>`
+          : (next?`<button class="btn dark" onclick="go('#/caso/${next.id}')">Siguiente caso: ${next.title} ▶</button>`:`<button class="btn dark" onclick="go('#/')">Volver al inicio ▶</button>`)}
+      </div>
+      <div class="kbd-hint">Atajos: <span class="kbd">←</span> <span class="kbd">→</span> para moverte entre pasos · <span class="kbd">T</span> teoría · <span class="kbd">Esc</span> cerrar</div>`;
+    }
+  }
+  const foot = `<div class="case-foot">
+    ${prev?`<button onclick="go('#/caso/${prev.id}')"><small>◀ Caso anterior</small><strong>${String(prev.num).padStart(2,'0')} · ${prev.title}</strong></button>`:`<button onclick="go('#/')"><small>◀ Volver</small><strong>Inicio</strong></button>`}
+    ${next?`<button class="next" onclick="go('#/caso/${next.id}')"><small>Caso siguiente ▶</small><strong>${String(next.num).padStart(2,'0')} · ${next.title}</strong></button>`:`<button class="next" onclick="go('#/')"><small>Fin ▶</small><strong>Inicio</strong></button>`}
+  </div>`;
+  const keepScroll = state.keep; state.keep=false;
+  $('#app').innerHTML = head + body + foot;
+  if(view==='solucion' && !state.all){
+    const p = document.querySelector('.progress');
+    if(p && window.__lastCase===c.id && window.__lastView==='solucion') p.scrollIntoView({block:'start'}); else window.scrollTo(0,0);
+    window.scrollBy(0,-90);
+  } else window.scrollTo(0,0);
+  window.__lastCase=c.id; window.__lastView=view;
+}
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeTheory(); return; }
+  if($('#modal').classList.contains('open')) return;
+  if(e.target.matches('input,textarea')) return;
+  if(e.key==='t'||e.key==='T'){ openTheory(); return; }
+  const m = (location.hash||'').match(/^#\/caso\/(\w+)\/solucion\/(\d+)/);
+  if(m && !state.all){
+    const c = CASES.find(x=>x.id===m[1]); const n = +m[2];
+    if(e.key==='ArrowRight' && n<c.steps.length) go(`#/caso/${c.id}/solucion/${n+1}`);
+    if(e.key==='ArrowLeft' && n>1) go(`#/caso/${c.id}/solucion/${n-1}`);
+  }
+});
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
